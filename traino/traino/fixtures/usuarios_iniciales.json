@@ -1,0 +1,12 @@
+[
+  {
+    "model": "traino.user",
+    "pk": 1,
+    "fields": {
+      "name": "Administrador Traino",
+      "username": "admin",
+      "password": "pbkdf2_sha256$1200000$l5wfnaGFRs2XSKu5h9GY7t$zPjo25D2MA6l1wtVETi+NdlTSc/YCpzdxzwUn33p6Qc=",
+      "role_type": "admin"
+    }
+  }
+]

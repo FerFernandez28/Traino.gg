@@ -1,0 +1,573 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traino - Panel del Coach</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles_dashboards.css' %}">
+</head>
+<body>
+
+    <div class="sidebar-container">
+        <div>
+            <a class="sidebar-brand" href="#">TRAINO<span>.COACH</span></a>
+            <ul class="sidebar-menu">
+                <li>
+                    <div id="btn-show-dashboard" class="sidebar-link active">
+                        <i class="bi bi-grid-1x2-fill"></i> Dashboard
+                    </div>
+                </li>
+                <li>
+                    <div id="btn-show-calendar" class="sidebar-link">
+                        <i class="bi bi-calendar3"></i> Agenda Tactica
+                    </div>
+                </li>
+                <li>
+                    <div id="btn-show-miro" class="sidebar-link">
+                        <i class="bi bi-clipboard2-data-fill"></i> Estrategias Miro
+                    </div>
+                </li>
+                <li>
+                    <div id="btn-show-attendance" class="sidebar-link">
+                        <i class="bi bi-person-check-fill"></i> Control de Asistencias
+                    </div>
+                </li>
+                <li>
+                    <div id="btn-show-profile" class="sidebar-link">
+                        <i class="bi bi-person-gear"></i> Mi Perfil
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="sidebar-footer">
+            {% if usuario %}
+            <div class="sidebar-user-card">
+                <div class="user-avatar-mini" style="background: linear-gradient(135deg, #ff0055, #7c3aed);">CH</div>
+                <div class="overflow-hidden">
+                    <h6 class="text-white mb-0 text-truncate" style="font-size: 0.85rem;">{{ usuario.username }}</h6>
+                    <small class="text-warning text-uppercase" style="font-size: 0.65rem;">{{ usuario.role_type }}</small>
+                </div>
+            </div>
+            {% endif %}
+            <a href="{% url 'login' %}" class="btn btn-logout-sidebar"><i class="bi bi-box-arrow-left"></i> Cerrar Sesión</a>
+        </div>
+    </div>
+
+    <div style="margin-left: 260px; padding: 40px; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between;">
+        
+        <div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="font-urbanist fw-bold m-0">COACH <span class="accent-text">DASHBOARD</span></h1>
+                
+                <div class="d-flex align-items-center gap-3">
+                    <span id="indicador-modo" class="badge rounded-pill p-2 px-3 bg-success text-black fw-bold">● MODO EDICION VIVO</span>
+                    
+                    <form method="GET" action="" class="d-flex align-items-center gap-2 m-0" id="form-mes-filtro" style="display: none !important;">
+                        <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                        <label for="mes_filtro" class="text-white-50 small fw-bold mb-0">MES:</label>
+                        <select name="mes_filtro" id="mes_filtro" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 140px; background-color: #1e293b; color: #fff; border: 1px solid #475569; font-weight: 600; border-radius: 6px;">
+                            {% for m in meses %}
+                                <option value="{{ m.numero }}" {% if m.numero == mes_seleccionado %}selected{% endif %}>{{ m.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </div>
+            </div>
+
+            {% if mensaje_exito %}
+                <div class="alert alert-success bg-success text-white border-0 text-center fw-bold mb-4">{{ mensaje_exito }}</div>
+            {% endif %}
+            {% if mensaje_error %}
+                <div class="alert alert-danger bg-danger text-white border-0 text-center fw-bold mb-4">{{ mensaje_error }}</div>
+            {% endif %}
+
+            <!-- panel rendimiento -->
+            <section id="section-dashboard" class="dashboard-panel animate-fade-in">
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="p-4 h-100" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #334155; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <h4 class="text-uppercase mb-3 font-urbanist fw-bold text-muted" style="font-size: 0.75rem; letter-spacing: 1.5px;">Cronograma Dirigido</h4>
+                                {% for ev in proximos_eventos %}
+                                <div class="p-2 mb-2 d-flex align-items-center justify-content-between" style="background-color: #020617; border-radius: 8px; border-left: 3px solid #f59e0b;">
+                                    <div>
+                                        <h6 class="mb-0 font-urbanist fw-bold" style="font-size: 0.85rem;">{{ ev.title }}</h6>
+                                        <small class="text-muted" style="font-size: 0.7rem;">{{ ev.date|date:"d/m" }} - {{ ev.scheduled_time|time:"H:i" }} HS</small>
+                                    </div>
+                                    <span class="badge bg-dark border border-secondary text-warning font-monospace" style="font-size: 0.65rem;">{{ ev.get_event_type_display|upper }}</span>
+                                </div>
+                                {% empty %}
+                                <div class="text-muted small py-2">Sin actividades próximas registradas.</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="p-4 h-100" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #334155; border-radius: 12px;">
+                            <h4 class="text-uppercase mb-3 font-urbanist fw-bold text-muted" style="font-size: 0.75rem; letter-spacing: 1.5px;">Rendimiento del Plantel</h4>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="p-3 text-center" style="background: linear-gradient(135deg, rgba(255, 0, 85, 0.1), rgba(15, 23, 42, 0.8)); border: 1px solid rgba(255, 0, 85, 0.2); border-radius: 8px;">
+                                        <small class="text-muted d-block mb-1" style="font-size: 0.7rem; font-weight: 700;">WINRATE GLOBAL</small>
+                                        <span class="font-urbanist fw-bold" style="font-size: 1.4rem; color: #ff0055;">62.4%</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 text-center" style="background-color: #020617; border: 1px solid #1e293b; border-radius: 8px;">
+                                        <small class="text-muted d-block mb-1" style="font-size: 0.7rem; font-weight: 700;">K/D GRUPAL</small>
+                                        <span class="font-urbanist fw-bold" style="font-size: 1.4rem; color: #fff;">1.18</span>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="p-2" style="background-color: #020617; border: 1px solid #1e293b; border-radius: 8px;">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Asistencia Promedio</small>
+                                            <span class="fw-bold text-success" style="font-size: 0.7rem;">91%</span>
+                                        </div>
+                                        <div class="progress" style="height: 4px; background-color: #1e293b;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 91%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="p-4 h-100" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #334155; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <form action="{% url 'mark_attendance' %}" method="POST" class="m-0 w-100">
+                                {% csrf_token %}
+                                <input type="hidden" name="nuevo_estado" value="conectado">
+                                <input type="hidden" name="mes" value="{{ mes_seleccionado }}">
+                                
+                                <h4 class="text-uppercase mb-2 font-urbanist fw-bold text-muted" style="font-size: 0.75rem; letter-spacing: 1.5px;">Convocar a Práctica</h4>
+                                
+                                <div class="mb-2">
+                                    <label class="text-white-50 small mb-1" style="font-size: 0.65rem;">SELECCIONAR JUGADOR:</label>
+                                    <select name="usuario_id" class="form-select form-box w-100" style="padding: 6px 12px !important; font-size: 0.8rem;" required>
+                                        <option value="">-- Seleccionar Pro --</option>
+                                        {% for j in todos_los_jugadores %}
+                                            <option value="{{ j.id }}">{{ j.name }} ({{ j.username }})</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-save-gamer w-100 py-2 font-urbanist" style="font-size: 0.8rem;">
+                                    <i class="bi bi-person-check-fill me-1"></i> ASIGNAR PRESENTE HOY
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- agenda visual -->
+            <section id="section-calendar" class="dashboard-panel animate-fade-in" style="display: none;">
+                <div class="agenda-container mb-4" id="agendaScrollContainer">
+                    <table class="table align-middle m-0 table-agenda">
+                        <thead>
+                            <tr>
+                                <th class="day-header">Día</th>
+                                {% for hora in bloques_horarios %}
+                                    <th class="text-center">{{ hora }} HS</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dia, horas in agenda.items %}
+                            <tr>
+                                <td class="day-cell">{{ dia }}</td>
+                                
+                                {% for hora, evento in horas.items %}
+                                    {% if evento == 'spanned' %}
+                                    {% elif evento %}
+                                        <td colspan="{{ evento.duration_hours|default:1 }}">
+                                            <div class="event-card 
+                                                {% if evento.event_type == 'training' %}type-training
+                                                {% elif evento.event_type == 'match' %}type-match
+                                                {% elif evento.event_type == 'tactics' %}type-tactics
+                                                {% elif evento.event_type == 'offday' %}type-offday
+                                                {% else %}type-other{% endif %}">
+                                                
+                                                <div>
+                                                    <div class="d-flex justify-content-between align-items-start gap-1 mb-1">
+                                                        <div class="fw-bold">
+                                                            {{ evento.title }}
+                                                        </div>
+                                                        <i class="{% if evento.event_type == 'training' %}bi bi-lightning-charge text-success{% elif evento.event_type == 'match' %}bi bi-crosshair text-primary{% elif evento.event_type == 'tactics' %}bi bi-clipboard2-data text-purple{% elif evento.event_type == 'offday' %}bi bi-moon-stars text-danger{% else %}bi bi-calendar-event text-secondary{% endif %}" style="font-size: 0.85rem;"></i>
+                                                    </div>
+                                                    
+                                                    {% if evento.rival or evento.maps %}
+                                                    <div class="text-muted small text-truncate" style="font-size: 0.7rem; max-width: 130px;">
+                                                        {% if evento.rival %}⚔️ {{ evento.rival }}{% endif %}
+                                                        {% if evento.maps %}{% if evento.rival %} | {% endif %}🗺️ {{ evento.maps }}{% endif %}
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                                
+                                                <button type="button" class="btn-info-modal mt-2" data-bs-toggle="modal" data-bs-target="#modalEvento{{ evento.id }}" onclick="guardarPosicionScroll()">
+                                                    <i class="bi bi-pencil-square me-1"></i> Gestionar
+                                                </button>
+                                            </div>
+
+                                            <div class="modal fade" id="modalEvento{{ evento.id }}" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content text-start text-white">
+                                                        <form action="{% url 'edit_event' %}" method="POST" onsubmit="guardarPosicionScroll()">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                                                            <input type="hidden" name="evento_id" value="{{ evento.id }}">
+                                                            <input type="hidden" name="mes_filtro" value="{{ mes_seleccionado }}">
+
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title fw-bold text-white"><span class="accent-text">EDITAR</span> DETALLES TÁCTICOS</h5>
+                                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="modal-alert-block text-center mb-3">
+                                                                    Bloque: {{ dia }} a las {{ hora }} hs ({{ evento.duration_hours }} hs)
+                                                                </div>
+                                                                
+                                                                <div class="mb-3">
+                                                                    <label class="label-modal-custom">TÍTULO DE LA ACTIVIDAD:</label>
+                                                                    <input type="text" name="titulo" class="form-control form-box" value="{{ evento.title }}" required>
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label class="label-modal-custom">OPONENTE / RIVAL / CLAN:</label>
+                                                                    <input type="text" name="rival" class="form-control form-box" value="{{ evento.rival|default:'' }}" placeholder="Ej: Team Liquid">
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label class="label-modal-custom">MAPAS / POOL A PRACTICAR:</label>
+                                                                    <input type="text" name="maps" class="form-control form-box" value="{{ evento.maps|default:'' }}" placeholder="Ej: Clubhouse / Chalet">
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label class="label-modal-custom">URL DE VOD / CLIP ESTRATÉGICO:</label>
+                                                                    <input type="url" name="video_link" class="form-control form-box text-info" value="{{ evento.video_link|default:'' }}" placeholder="https://youtube.com/...">
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label class="label-modal-custom">NOTAS E INSTRUCCIONES DEL COACH:</label>
+                                                                    <textarea name="notes" class="form-control form-box" rows="3" placeholder="Pautas tácticas para el plantel...">{{ evento.notes|default:'' }}</textarea>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-modal-cancel" data-bs-dismiss="modal">Cancelar</button>
+                                                                <button type="submit" class="btn btn-save-gamer px-4 py-2">GUARDAR CAMBIOS</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    {% else %}
+                                        <td style="padding: 0 !important;">
+                                            <button type="button" class="empty-slot-btn" onclick="guardarPosicionScroll(); abrirCreadorEvento('{{ dia }}', '{{ hora }}')"></button>
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex gap-4 justify-content-center mt-4 flex-wrap" style="font-size: 0.85rem;">
+                    <div class="d-flex align-items-center gap-2"><div style="width: 14px; height: 14px; background-color: #dcfce7; border-left: 3px solid #22c55e; border-radius: 3px;"></div><span class="text-white-50">Warmup / Entrenamiento</span></div>
+                    <div class="d-flex align-items-center gap-2"><div style="width: 14px; height: 14px; background-color: #dbeafe; border-left: 3px solid #3b82f6; border-radius: 3px;"></div><span class="text-white-50">Scrims / Partidos</span></div>
+                    <div class="d-flex align-items-center gap-2"><div style="width: 14px; height: 14px; background-color: #f3e8ff; border-left: 3px solid #a855f7; border-radius: 3px;"></div><span class="text-white-50">Análisis / VOD Review</span></div>
+                    <div class="d-flex align-items-center gap-2"><div style="width: 14px; height: 14px; background-color: #ffe4e6; border-left: 3px solid #f43f5e; border-radius: 3px;"></div><span class="text-white-50">Día Libre</span></div>
+                    <div class="d-flex align-items-center gap-2"><div style="width: 14px; height: 14px; background-color: #fff; border-left: 3px solid #ffd000; border-radius: 3px;"></div><span class="text-white-50">Otro</span></div>
+                </div>
+            </section>
+
+            <!-- perfil -->
+            <section id="section-profile" class="dashboard-panel animate-fade-in" style="display: none;">
+                <div class="p-4" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #334155; border-radius: 12px;">
+                    <h3 class="font-urbanist fw-bold mb-3">MI PERFIL <span class="accent-text">TÁCTICO</span></h3>
+                    <p class="text-muted small">Configuración de credenciales y datos operativos del Cuerpo Técnico.</p>
+                    <hr class="border-secondary opacity-20">
+                    
+                    <form action="{% url 'update_profile' %}" method="POST" style="max-width: 500px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                        <div class="mb-3">
+                            <label class="form-label text-white-50 small fw-bold">Nombre de Operador</label>
+                            <input type="text" name="name" class="form-control form-box-gamer" value="{{ usuario.name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-white-50 small fw-bold">Tag de Comunicación (Único)</label>
+                            <input type="text" class="form-control form-box-gamer" value="{{ usuario.username }}" disabled style="opacity: 0.5; cursor: not-allowed;">
+                        </div>
+                        <button type="submit" class="btn btn-save-gamer px-4 py-2 mt-2">Actualizar Ficha</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- miro -->
+            <section id="section-miro" class="dashboard-panel animate-fade-in" style="display: none;">
+                <div style="width: 100%; height: 600px; border: 1px solid #334155; border-radius: 12px; overflow: hidden; background-color: #0f172a;">
+                    <iframe width="100%" height="100%" src="{{ miro_boards.0.url }}" frameborder="0" scrolling="no" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>
+                </div>
+            </section>
+
+            <!-- asistencias -->
+            <section id="section-attendance" class="dashboard-panel animate-fade-in" style="display: none;">
+                <div class="p-4" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #334155; border-radius: 12px;">
+                    <h3 class="font-urbanist fw-bold mb-3">HISTORIAL GLOBAL DE <span class="accent-text">ASISTENCIAS</span></h3>
+                    <p class="text-muted small mb-4">Registro de fichajes e ingresos obligatorios del Roster Competitivo controlado por Laragon.</p>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-dark table-borderless table-hover align-middle m-0" style="font-size: 0.9rem; --bs-table-bg: transparent;">
+                            <thead>
+                                <tr class="text-muted small border-bottom border-secondary" style="font-weight: 700;">
+                                    <th>Fecha del Bloque</th>
+                                    <th>Integrante del Roster</th>
+                                    <th>Rol</th>
+                                    <th class="text-center">Estado de Fichaje</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-monospace text-muted">2026-06-19</td>
+                                    <td class="fw-bold">Juan Pérez</td>
+                                    <td><span class="badge bg-dark border border-secondary text-white">PLAYER</span></td>
+                                    <td class="text-center"><span class="badge bg-success-subtle text-success border border-success px-3">PRESENTE</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center border-top border-secondary pt-3 mt-5" style="opacity: 0.4;">
+            <p class="text-muted small mb-0">© 2026 Traino Pro — Agenda Modular E-sports</p>
+            <span class="small font-monospace">Core: v1.2.0-PRO</span>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="modalCrearEvento" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-start text-white">
+                <form action="{% url 'create_event' %}" method="POST" onsubmit="guardarPosicionScroll()">
+                    {% csrf_token %}
+                    <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                    <input type="hidden" id="form_fecha" name="fecha">
+                    <input type="hidden" id="form_hora" name="hora">
+                    <input type="hidden" name="mes_filtro" value="{{ mes_seleccionado }}">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold text-white"><span class="accent-text">AGENDAR</span> NUEVA ACTIVIDAD</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="modal-alert-block text-center mb-4">
+                            Bloque de Inicio: <span id="label_dia_hora" class="font-monospace"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="label-modal-custom">TÍTULO DE LA ACTIVIDAD</label>
+                            <input type="text" name="titulo" class="form-control form-box" placeholder="Ej: Stratbook de Clubhouse setups / Scrim" required autocomplete="off">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="label-modal-custom">TIPO DE EVENTO TÉCNICO</label>
+                                <select name="tipo_evento" id="crear_tipo_evento" class="form-select form-box" onchange="toggleCamposEspecialesCrear()">
+                                    <option value="training">Warmup / Entrenamiento</option>
+                                    <option value="match">Scrim / Partido Competitivo</option>
+                                    <option value="tactics">Análisis Táctico / VOD Review</option>
+                                    <option value="offday">Día Libre / Descanso</option>
+                                    <option value="other">Otro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="label-modal-custom">DURACIÓN (HORAS)</label>
+                                <input type="number" name="duration_hours" class="form-control form-box" min="1" max="12" value="1" required>
+                            </div>
+                        </div>
+                        <div class="mb-3 d-none" id="crear_div_rival">
+                            <label class="label-modal-custom text-warning">Nombre del Rival / Oponente:</label>
+                            <input type="text" name="rival" class="form-control form-box border-warning" placeholder="Ej: Team Liquid o Faze Clan">
+                        </div>
+                        <div class="mb-3 d-none" id="crear_div_video">
+                            <label class="label-modal-custom text-info">Enlace de Referencia (VOD Link):</label>
+                            <input type="url" name="video_link" class="form-control form-box border-info" placeholder="https://youtube.com/watch?...">
+                        </div>
+                        <div class="mb-3">
+                            <label class="label-modal-custom">MAPAS SELECCIONADOS:</label>
+                            <div id="mapas_tags_container" class="d-flex flex-wrap gap-2 mb-2 p-2 rounded" style="background-color: #070d19; min-height: 44px; border: 1px solid #2e3f5a;">
+                                <span class="text-white-50 small my-auto px-1">Ningún mapa seleccionado</span>
+                            </div>
+                            <input type="hidden" name="maps" id="input_mapas_oculto">
+                            <select id="selector_mapas_pool" class="form-select form-box" onchange="agregarMapaTag(this.value); this.value='';">
+                                <option value="">+ Añadir mapa de la rotación...</option>
+                                <option value="Chalet">Chalet</option>
+                                <option value="Banco">Banco</option>
+                                <option value="Clubhouse">Clubhouse</option>
+                                <option value="Oregon">Oregon</option>
+                                <option value="Border">Border</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="label-modal-custom">NOTAS ADICIONALES:</label>
+                            <textarea name="notes" class="form-control form-box" rows="3" placeholder="Pautas urgentes para el bloque..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-modal-cancel" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-save-gamer px-4 py-2">PUBLICAR EN AGENDA</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    let mapasSeleccionados = [];
+    function agregarMapaTag(mapaNombre) {
+        if (!mapaNombre || mapasSeleccionados.includes(mapaNombre)) return;
+        mapasSeleccionados.push(mapaNombre);
+        actualizarUIvMapas();
+    }
+    function removerMapaTag(mapaNombre) {
+        mapasSeleccionados = mapasSeleccionados.filter(m => m !== mapaNombre);
+        actualizarUIvMapas();
+    }
+    function actualizarUIvMapas() {
+        const container = document.getElementById('mapas_tags_container');
+        const hiddenInput = document.getElementById('input_mapas_oculto');
+        if (mapasSeleccionados.length === 0) {
+            container.innerHTML = `<span class="text-white-50 small my-auto px-1">Ningún mapa seleccionado</span>`;
+            hiddenInput.value = "";
+            return;
+        }
+        container.innerHTML = '';
+        mapasSeleccionados.forEach(mapa => {
+            const tag = document.createElement('span');
+            tag.className = 'badge d-inline-flex align-items-center gap-2 p-2 px-3 bg-dark text-white fw-bold';
+            tag.style.border = '1px solid #ff0055';
+            tag.style.cursor = 'pointer';
+            tag.style.borderRadius = '20px';
+            tag.style.fontSize = '0.8rem';
+            tag.innerHTML = `<span style="color: #ff0055;">✕</span> ${mapa}`;
+            tag.onclick = () => removerMapaTag(mapa);
+            container.appendChild(tag);
+        });
+        hiddenInput.value = mapasSeleccionados.join(', ');
+    }
+
+    function toggleCamposEspecialesCrear() {
+        var tipo = document.getElementById('crear_tipo_evento').value;
+        var divRival = document.getElementById('crear_div_rival');
+        var divVideo = document.getElementById('crear_div_video');
+        if(divRival) divRival.classList.add('d-none');
+        if(divVideo) divVideo.classList.add('d-none');
+        if (tipo === 'match' && divRival) divRival.classList.remove('d-none');
+        if (tipo === 'tactics' && divVideo) divVideo.classList.remove('d-none');
+    }
+
+    function guardarPosicionScroll() {
+        const contenedor = document.getElementById('agendaScrollContainer');
+        if (contenedor) {
+            localStorage.setItem('coachAgendaScrollX', contenedor.scrollLeft);
+            localStorage.setItem('coachAgendaScrollY', contenedor.scrollTop);
+        }
+    }
+
+    function abrirCreadorEvento(diaNombre, horaTexto) {
+        mapasSeleccionados = [];
+        actualizarUIvMapas();
+        document.getElementById('label_dia_hora').innerText = diaNombre + " a las " + horaTexto + " hs";
+        document.getElementById('form_hora').value = horaTexto;
+        const partes = diaNombre.split(' ');
+        let fechaFormateada = "";
+        if (partes.length > 1 && partes[1].includes('/')) {
+            const infoFecha = partes[1].split('/');
+            const diaStr = infoFecha[0].padStart(2, '0');
+            const mesStr = infoFecha[1].padStart(2, '0');
+            const anioStr = new Date().getFullYear(); 
+            fechaFormateada = `${anioStr}-${mesStr}-${diaStr}`;
+        } else {
+            const diasMapa = { 'Lunes': 1, 'Martes': 2, 'Miércoles': 3, 'Jueves': 4, 'Viernes': 5, 'Sábado': 6, 'Domingo': 7 };
+            const objetivoNum = diasMapa[partes[0]];
+            const hoy = new Date();
+            let hoyNum = hoy.getDay();
+            if (hoyNum === 0) hoyNum = 7;
+            const diferencia = objetivoNum - hoyNum;
+            const fechaObjetivo = new Date(hoy);
+            fechaObjetivo.setDate(hoy.getDate() + diferencia);
+            const anio = fechaObjetivo.getFullYear();
+            const mes = String(fechaObjetivo.getMonth() + 1).padStart(2, '0');
+            const dia = String(fechaObjetivo.getDate()).padStart(2, '0');
+            fechaFormateada = `${anio}-${mes}-${dia}`;
+        }
+        document.getElementById('form_fecha').value = fechaFormateada;
+        toggleCamposEspecialesCrear();
+        var modalCrear = new bootstrap.Modal(document.getElementById('modalCrearEvento'));
+        modalCrear.show();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const links = {
+            'btn-show-dashboard': document.getElementById('section-dashboard'),
+            'btn-show-calendar': document.getElementById('section-calendar'),
+            'btn-show-profile': document.getElementById('section-profile'),
+            'btn-show-miro': document.getElementById('section-miro'),
+            'btn-show-attendance': document.getElementById('section-attendance')
+        };
+
+        const formMesFiltro = document.getElementById('form-mes-filtro');
+
+        function switchSection(sectionId) {
+            Object.keys(links).forEach(id => {
+                const btn = document.getElementById(id);
+                if(btn) btn.classList.remove('active');
+                if(links[id]) links[id].style.display = 'none';
+            });
+
+            const targetBtn = document.getElementById(sectionId);
+            const targetPanel = links[sectionId];
+
+            if (targetBtn) targetBtn.classList.add('active');
+            if (targetPanel) targetPanel.style.display = 'block';
+
+            if (sectionId === 'btn-show-calendar') {
+                if(formMesFiltro) formMesFiltro.style.setProperty('display', 'flex', 'important');
+            } else {
+                if(formMesFiltro) formMesFiltro.style.setProperty('display', 'none', 'important');
+            }
+
+            localStorage.setItem('coachActiveSection', sectionId);
+        }
+
+        Object.keys(links).forEach(btnId => {
+            const btnElement = document.getElementById(btnId);
+            if (btnElement) {
+                btnElement.addEventListener('click', () => {
+                    switchSection(btnId);
+                });
+            }
+        });
+
+        const cachedSection = localStorage.getItem('coachActiveSection') || 'btn-show-dashboard';
+        switchSection(cachedSection);
+
+        const contenedor = document.getElementById('agendaScrollContainer');
+        const posX = localStorage.getItem('coachAgendaScrollX');
+        const posY = localStorage.getItem('coachAgendaScrollY');
+        if (contenedor) {
+            if (posX !== null) contenedor.scrollLeft = parseInt(posX, 10);
+            if (posY !== null) contenedor.scrollTop = parseInt(posY, 10);
+            localStorage.removeItem('coachAgendaScrollX');
+            localStorage.removeItem('coachAgendaScrollY');
+        }
+    });
+</script>
+</body>
+</html>

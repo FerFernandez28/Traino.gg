@@ -1,0 +1,101 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800&display=swap');
+
+body.bg-bunker {
+    background-color: #020617 !important;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(255, 0, 85, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(124, 58, 237, 0.05) 0px, transparent 50%);
+    background-attachment: fixed;
+    background-size: cover;
+    font-family: 'Urbanist', sans-serif;
+    color: #f8fafc !important;
+    min-height: 100vh;
+}
+
+
+.card-bunker {
+    background-color: rgba(15, 23, 42, 0.6) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 0, 85, 0.25) !important; 
+    border-radius: 16px !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 0, 85, 0.05) !important;
+}
+
+
+.label-gamer {
+    color: #94a3b8 !important;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+
+.input-bunker {
+    background-color: rgba(2, 6, 23, 0.8) !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    font-size: 0.95rem;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.input-bunker:focus {
+    border-color: #ff0055 !important;
+    box-shadow: 0 0 12px rgba(255, 0, 85, 0.3) !important;
+    background-color: #020617 !important;
+}
+
+.btn-9z-neon {
+    background-color: #ff0055 !important;
+    border: none !important;
+    color: white !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out !important;
+    box-shadow: 0 4px 12px rgba(255, 0, 85, 0.2);
+}
+
+.btn-9z-neon:hover {
+    background-color: #d90048 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.4);
+}
+
+.alert-bunker {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    color: #f87171 !important;
+    border: 1px solid rgba(239, 68, 68, 0.2) !important;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* EXTENSION PARA LA PANTALLA DE REGISTRO  */
+.select-bunker {
+    background-color: rgba(2, 6, 23, 0.8) !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    font-size: 0.95rem;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.select-bunker:focus {
+    border-color: #ff0055 !important;
+    box-shadow: 0 0 12px rgba(255, 0, 85, 0.3) !important;
+}
+
+.select-bunker option {
+    background-color: #020617;
+    color: white;
+}

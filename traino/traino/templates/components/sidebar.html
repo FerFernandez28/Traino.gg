@@ -1,0 +1,53 @@
+<div class="sidebar-container">
+    <div>
+        <a class="sidebar-brand" href="#">TRAINO<span>.GG</span></a>
+        
+        <ul class="sidebar-menu">
+            <li>
+                <div id="btn-show-dashboard" class="sidebar-link active">
+                    <i class="bi bi-grid-1x2-fill"></i> Dashboard
+                </div>
+            </li>
+            <li>
+                <div id="btn-show-calendar" class="sidebar-link">
+                    <i class="bi bi-calendar3"></i> Agenda Táctica
+                </div>
+            </li>
+            <li>
+                <div id="btn-show-profile" class="sidebar-link">
+                    <i class="bi bi-person-badge"></i> Mi Perfil Pro
+                </div>
+            </li>
+            <li>
+                <div id="btn-show-miro" class="sidebar-link">
+                    <i class="bi bi-diagram-3"></i> Pizarra Miro
+                </div>
+            </li>
+            <li>
+                <div id="btn-show-attendance" class="sidebar-link">
+                    <i class="bi bi-clock-history"></i> Historial Asistencias
+                </div>
+            </li>
+            <li>
+                <div id="btn-show-analytics" class="sidebar-link" onclick="alert('Módulo de Estadísticas de R6 - Próximamente')">
+                    <i class="bi bi-graph-up-arrow"></i> Estadísticas
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-footer">
+        {% if usuario %}
+        <div class="sidebar-user-card">
+            <div class="user-avatar-mini">
+                {{ usuario.username|slice:":2"|upper }}
+            </div>
+            <div class="overflow-hidden">
+                <h6 class="text-white mb-0 text-truncate" style="font-size: 0.85rem;">{{ usuario.username }}</h6>
+                <small class="text-muted text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">{{ usuario.role_type }}</small>
+            </div>
+        </div>
+        {% endif %}
+        <a href="{% url 'login' %}" class="btn btn-logout-sidebar"><i class="bi bi-box-arrow-left"></i> Cerrar Sesión</a>
+    </div>
+</div>

@@ -1,0 +1,123 @@
+[
+{
+  "model": "traino.competitiveteam2026",
+  "pk": 1,
+  "fields": {
+    "name": "9z Team",
+    "region": "latam",
+    "logo_url": "/static/images/logos/9z.png",
+    "global_rank": 2,
+    "created_at": "2026-06-19T05:46:33.672Z"
+  }
+},
+{
+  "model": "traino.competitiveteam2026",
+  "pk": 2,
+  "fields": {
+    "name": "FaZe Clan",
+    "region": "br",
+    "logo_url": "/static/images/logos/FaZeClan.png",
+    "global_rank": 1,
+    "created_at": "2026-06-19T05:48:45.812Z"
+  }
+},
+{
+  "model": "traino.competitiveteam2026",
+  "pk": 3,
+  "fields": {
+    "name": "Team Liquid",
+    "region": "br",
+    "logo_url": "/static/images/logos/TeamLiquid.png",
+    "global_rank": 3,
+    "created_at": "2026-06-19T05:53:37.263Z"
+  }
+},
+{
+  "model": "traino.competitiveteam2026",
+  "pk": 4,
+  "fields": {
+    "name": "LOUD",
+    "region": "br",
+    "logo_url": "/static/images/logos/LOUD.png",
+    "global_rank": 4,
+    "created_at": "2026-06-19T05:54:13.093Z"
+  }
+},
+{
+  "model": "traino.competitiveteam2026",
+  "pk": 5,
+  "fields": {
+    "name": "FURIA",
+    "region": "br",
+    "logo_url": "/static/images/logos/FURIA.png",
+    "global_rank": 5,
+    "created_at": "2026-06-19T05:55:33.308Z"
+  }
+},
+{
+  "model": "traino.competitiveteam2026",
+  "pk": 6,
+  "fields": {
+    "name": "Black Dragons",
+    "region": "br",
+    "logo_url": "/static/images/logos/BlackDragons.png",
+    "global_rank": 6,
+    "created_at": "2026-06-19T05:55:53.360Z"
+  }
+},
+{
+  "model": "traino.competitiveteam2026",
+  "pk": 7,
+  "fields": {
+    "name": "Ninjas in Pyjamas",
+    "region": "br",
+    "logo_url": "/static/images/logos/Ninjas in Pyjamas.png",
+    "global_rank": 7,
+    "created_at": "2026-06-19T06:00:45.185Z"
+  }
+},
+{
+  "model": "traino.competitiveteam2026",
+  "pk": 8,
+  "fields": {
+    "name": "Imperial Esports",
+    "region": "br",
+    "logo_url": "/static/images/logos/Imperial Esports.png",
+    "global_rank": 8,
+    "created_at": "2026-06-19T06:01:10.661Z"
+  }
+},
+{
+  "model": "traino.competitiveteam2026",
+  "pk": 9,
+  "fields": {
+    "name": "Fluxo W7M",
+    "region": "br",
+    "logo_url": "/static/images/logos/Fluxo W7M.png",
+    "global_rank": 9,
+    "created_at": "2026-06-19T06:01:29.994Z"
+  }
+},
+{
+  "model": "traino.competitiveteam2026",
+  "pk": 10,
+  "fields": {
+    "name": "LOS",
+    "region": "br",
+    "logo_url": "/static/images/logos/LOS.png",
+    "global_rank": 10,
+    "created_at": "2026-06-19T06:01:48.041Z"
+  }
+},
+{
+  "model": "traino.competitiveteam2026",
+  "pk": 11,
+  "fields": {
+    "name": "INTZ",
+    "region": "br",
+    "logo_url": "/static/images/logos/INTZ.png",
+    "global_rank": 11,
+    "created_at": "2026-06-19T06:02:05.269Z"
+  }
+}
+]

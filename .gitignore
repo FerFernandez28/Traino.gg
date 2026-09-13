@@ -1,0 +1,15 @@
+# Entornos virtuales de Python
+venv/
+env/
+.env
+__pycache__/
+*.pyc
+
+# Node (si tenés frontend integrado)
+node_modules/
+dist/
+
+# Archivos del sistema / IDEs
+.vscode/
+.idea/
+*.sqlite3
