@@ -1,15 +1,20 @@
-# Entornos virtuales de Python
+# Entorno virtual de Python
+traino_env/
 venv/
 env/
+
+# Variables privadas y base local
 .env
+db.sqlite3
+
+# Archivos multimedia subidos por usuarios
+media/
+*/media/
+
+# Basura de Python
 __pycache__/
 *.pyc
 
-# Node (si tenés frontend integrado)
-node_modules/
-dist/
-
-# Archivos del sistema / IDEs
+# IDEs
 .vscode/
 .idea/
-*.sqlite3
