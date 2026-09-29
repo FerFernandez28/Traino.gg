@@ -28,6 +28,8 @@ urlpatterns = [
     path('eliminar-equipo/', views.eliminar_equipo, name='eliminar_equipo'),
     #panel admin editar jugador
     path('editar_jugador_admin/', views.editar_jugador_admin, name='editar_jugador_admin'),
+
+    path('google-login/', views.google_login, name='google_login'),
 ]
 
 if settings.DEBUG:

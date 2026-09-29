@@ -1,6 +1,9 @@
 import datetime
 import calendar
 import os  # para poder leer variables de entorno - .env
+from django.views.decorators.csrf import csrf_exempt
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.decorators.http import require_POST
@@ -453,3 +456,45 @@ def editar_jugador_admin(request):
             request.session['mensaje_error'] = str(e)
             
     return redirect('/home')
+
+
+@csrf_exempt
+def google_login(request):
+    if request.method == 'POST':
+        token = request.POST.get('credential')
+        try:
+            # Valida el token oficial con tu ID de Google
+            idinfo = id_token.verify_oauth2_token(
+                token, 
+                google_requests.Request(), 
+                '238189205547-irh68sqouu752u27uea1v47m5dg3uvpr.apps.googleusercontent.com'
+            )
+            
+            email = idinfo['email']
+            nombre = idinfo.get('name', 'Usuario Google')
+            
+            # Usamos la primera parte del mail como username (ej: fernando@gmail.com -> fernando)
+            base_username = email.split('@')[0] 
+            
+            # Busca si ya existe en tu base de datos
+            usuario = User.objects.filter(username=base_username).first()
+            
+            if not usuario:
+                # Si es nuevo, lo registramos automaticamente
+                usuario = User.objects.create(
+                    name=nombre,
+                    username=base_username,
+                    password='login_seguro_google_2026', 
+                    role_type='player'
+                )
+
+            # Le iniciamos la sesion
+            request.session['usuario_id'] = usuario.id
+            
+            return redirect(f'/home?usuario_id={usuario.id}')
+            
+        except ValueError:
+            # Si hay error en el token
+            return redirect('/login?error=Error al iniciar sesion con Google')
+            
+    return redirect('login')

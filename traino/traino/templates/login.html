@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>9z R6 - Búnker de Acceso</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{% static 'css/styles_gamers.css' %}">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="bg-bunker d-flex align-items-center justify-content-center vh-100">
 
     <div class="container" style="max-width: 440px;">
-        
-
         <div class="card card-bunker p-4">
             <h2 class="text-center mb-2 fw-bold font-urbanist text-white" style="letter-spacing: 1px;">TRAINO<span style="color: #ff0055;">.GG</span></h2>
             
@@ -21,6 +21,32 @@
                     {{ mensaje_error }}
                 </div>
             {% endif %}
+
+        <!-- Configuracion del login de Google -->
+            <div id="g_id_onload"
+                data-client_id="238189205547-irh68sqouu752u27uea1v47m5dg3uvpr.apps.googleusercontent.com" 
+                data-context="signin"
+                data-ux_mode="popup"
+                data-login_uri="http://localhost:8000/google-login/"
+                data-auto_prompt="false">
+            </div>
+            
+            <!-- Envolvemos el boton para que Bootstrap no lo comprima -->
+            <div class="d-flex justify-content-center mb-4">
+                <div class="g_id_signin"
+                    data-type="standard"
+                    data-shape="rectangular"
+                    data-theme="outline"
+                    data-text="signin_with"
+                    data-size="large"
+                    data-logo_alignment="left">
+                </div>
+            </div>
+
+            <!-- Separador -->
+            <div class="divider-bunker mb-4">
+                <span>O INGRESÁ CON TUS DATOS</span>
+            </div>
 
             <form method="POST">
                 {% csrf_token %}
@@ -31,8 +57,16 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label label-gamer">Contraseña</label>
-                    <input type="password" name="password" class="form-control input-bunker" placeholder="••••••••" required>
+                    <div class="d-flex justify-content-between align-items-end mb-1">
+                        <label class="form-label label-gamer mb-0">Contraseña</label>
+                        <a href="#" class="forgot-link">¿Olvidaste tu clave?</a>
+                    </div>
+                    <div class="input-password-wrapper">
+                        <input type="password" name="password" id="loginPassword" class="form-control input-bunker" placeholder="••••••••" required>
+                        <button type="button" class="btn-eye-toggle" onclick="togglePassword('loginPassword', this)">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-9z-neon w-100 mb-3">
@@ -47,5 +81,22 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Funcion para el ojito de la contraseña
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        }
+    </script>
 </body>
 </html>

@@ -99,3 +99,77 @@ body.bg-bunker {
     background-color: #020617;
     color: white;
 }
+
+/*NUEVOS ESTILOS LOGIN COMPLETO*/
+.btn-google {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    border: 1px solid #cbd5e1 !important;
+    transition: all 0.2s ease-in-out !important;
+    font-size: 0.9rem;
+}
+
+.btn-google:hover {
+    background-color: #f1f5f9 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+}
+
+.divider-bunker {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.divider-bunker::before, .divider-bunker::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #334155;
+}
+
+.divider-bunker span {
+    padding: 0 12px;
+}
+
+.forgot-link {
+    color: #ff0055;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.forgot-link:hover {
+    color: #d90048;
+    text-decoration: underline;
+}
+
+.input-password-wrapper {
+    position: relative;
+}
+
+.input-password-wrapper .input-bunker {
+    padding-right: 40px !important;
+}
+
+.btn-eye-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #94a3b8;
+    padding: 0;
+    z-index: 10;
+    transition: color 0.2s;
+}
+
+.btn-eye-toggle:hover {
+    color: #ff0055;
+}
