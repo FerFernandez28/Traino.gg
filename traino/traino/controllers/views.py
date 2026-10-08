@@ -11,6 +11,10 @@ from django.contrib.auth import logout
 from django.contrib.auth.hashers import make_password, check_password
 from ..models.models import User, Player, Event, Attendance, CompetitiveTeam2026
 from ..src.singleton import SystemConfigSingleton
+from django.core.signing import TimestampSigner, SignatureExpired, BadSignature
+from django.core.mail import send_mail
+from django.utils.html import strip_tags
+from django.conf import settings
 
 MIRO_BOARDS = [
     {
@@ -187,12 +191,11 @@ class UsuarioController(View):
         return render(request, 'register_user.html')
 
     def post(self, request):
-        nombre_web = request.POST.get('name') or request.POST.get('nombre')
-        nickname_web = request.POST.get('nickname') or request.POST.get('username')
+        nickname_web = request.POST.get('nickname')
+        email_web = request.POST.get('email')
         password_web = request.POST.get('password')
-        rol_web = request.POST.get('role_type') or request.POST.get('rol_tipo')
 
-        if not nombre_web or not nickname_web or not password_web or not rol_web:
+        if not nickname_web or not email_web or not password_web:
             return render(request, 'register_user.html', {'mensaje_error': 'Error: Todos los campos son obligatorios.'})
 
         if len(password_web) < 4:
@@ -200,16 +203,23 @@ class UsuarioController(View):
 
         if User.objects.filter(username=nickname_web).exists():
             return render(request, 'register_user.html', {'mensaje_error': 'Error: El Nickname ya está en uso por otra escuadra.'})
+            
+        if User.objects.filter(email=email_web).exists():
+            return render(request, 'register_user.html', {'mensaje_error': 'Error: Ese correo ya está registrado en el Búnker.'})
 
         password_hasheada = make_password(password_web)
 
         try:
             nuevo_usuario = User.objects.create(
-                name=nombre_web, username=nickname_web, password=password_hasheada, role_type=rol_web
+                name=nickname_web, 
+                username=nickname_web, 
+                email=email_web, 
+                password=password_hasheada, 
+                role_type='player'
             )
 
-            if rol_web == 'player':
-                Player.objects.create(position_role='A Definir', team_name='9z Team', user=nuevo_usuario)
+            # Creamos la ficha del jugador
+            Player.objects.create(position_role='A Definir', team_name='9z Team', user=nuevo_usuario)
 
             return redirect('login')
         except Exception as e:
@@ -463,17 +473,18 @@ def google_login(request):
     if request.method == 'POST':
         token = request.POST.get('credential')
         try:
-            # Valida el token oficial con tu ID de Google
+            # Valida el token oficial con tu ID de Google y 30 segundos de tolerancia
             idinfo = id_token.verify_oauth2_token(
                 token, 
                 google_requests.Request(), 
-                '238189205547-irh68sqouu752u27uea1v47m5dg3uvpr.apps.googleusercontent.com'
+                '238189205547-irh68sqouu752u27uea1v47m5dg3uvpr.apps.googleusercontent.com',
+                clock_skew_in_seconds=30
             )
             
             email = idinfo['email']
             nombre = idinfo.get('name', 'Usuario Google')
             
-            # Usamos la primera parte del mail como username (ej: fernando@gmail.com -> fernando)
+            # Usamos la primera parte del mail como username
             base_username = email.split('@')[0] 
             
             # Busca si ya existe en tu base de datos
@@ -484,17 +495,104 @@ def google_login(request):
                 usuario = User.objects.create(
                     name=nombre,
                     username=base_username,
-                    password='login_seguro_google_2026', 
+                    email=email,
+                    password=make_password('login_seguro_google_2026'), 
                     role_type='player'
                 )
+                # Creamos su ficha de jugador
+                Player.objects.create(position_role='A Definir', team_name='9z Team', user=usuario)
 
             # Le iniciamos la sesion
             request.session['usuario_id'] = usuario.id
             
             return redirect(f'/home?usuario_id={usuario.id}')
             
-        except ValueError:
-            # Si hay error en el token
+        except ValueError as e:
+            # error si hay de google
+            print(f"ERROR DE GOOGLE: {str(e)}")
             return redirect('/login?error=Error al iniciar sesion con Google')
             
+        except Exception as e:
+            # Para cualquier otro error
+            print(f"ERROR GENERAL: {str(e)}")
+            return redirect('/login?error=Error general')
+            
     return redirect('login')
+
+
+# Fabricante de tokens seguros
+signer = TimestampSigner()
+
+def solicitar_recuperacion(request):
+    if request.method == 'POST':
+        email_web = request.POST.get('email')
+        usuario = User.objects.filter(email=email_web).first()
+        
+        if usuario:
+            # Fabricamos un Token firmado con el ID del usuario
+            token = signer.sign(str(usuario.id))
+            
+            # Armamos el link exacto
+            reset_link = f"http://localhost:8000/reset/{token}/"
+            
+            # Diseñamos el mail modo Búnker
+            asunto = 'Traino.GG - Recuperación de Acceso'
+            html_message = f"""
+            <div style="background-color: #0f172a; color: white; padding: 30px; font-family: sans-serif; text-align: center; border-radius: 10px;">
+                <h2 style="color: #ff0055; letter-spacing: 1px;">TRAINO&#8203;.GG</h2>
+                <p style="color: #94a3b8;">Usuario <b>{usuario.username}</b>,</p>
+                <p style="color: #e2e8f0;">Se ha solicitado un cambio de contraseña para tu usuario. Ingresá al siguiente enlace seguro para crear una nueva (caduca en 1 hora):</p>
+                <a href="{reset_link}" style="background-color: #ff0055; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; margin-top: 15px; font-weight: bold;">RESTABLECER CONTRASEÑA</a>
+                <p style="margin-top: 30px; font-size: 12px; color: #64748b;">Si no solicitaste este cambio, ignorá este mensaje.</p>
+            </div>
+            """
+            plain_message = strip_tags(html_message)
+            
+            try:
+                # Manda el correo
+                send_mail(
+                    asunto, plain_message, settings.EMAIL_HOST_USER, [usuario.email], html_message=html_message, fail_silently=False
+                )
+            except Exception as e:
+                print(f"ERROR AL ENVIAR MAIL: {e}")
+                
+        return redirect('password_reset_done')
+    
+    return render(request, 'password_reset.html')
+
+def recuperacion_enviada(request):
+    return render(request, 'password_reset_sent.html')
+
+def confirmar_recuperacion(request, token):
+    try:
+        # verificamos que el token sea valido y no tenga mas de 1 hora
+        usuario_id = signer.unsign(token, max_age=3600)
+        usuario = User.objects.get(id=usuario_id)
+    except (SignatureExpired, BadSignature, User.DoesNotExist):
+        return render(request, 'password_reset_form.html', {'validlink': False})
+
+    error = None # guardamos mensajes de error
+    
+    if request.method == 'POST':
+        nueva_clave = request.POST.get('new_password')
+        confirmar_clave = request.POST.get('confirm_password')
+
+        # primero validamos que las dos contraseñas coincidan
+        if nueva_clave != confirmar_clave:
+            error = "Las contraseñas no coinciden. Revisá e intentá de nuevo."
+        
+        # segundo validar que la nueva no sea igual a la vieja con check_password
+        elif check_password(nueva_clave, usuario.password):
+            error = "La nueva contraseña no puede ser igual a la anterior."
+            
+        # tercero validar longitud minima por seguridad en el backend
+        elif len(nueva_clave) < 4:
+            error = "La contraseña debe tener al menos 4 caracteres."
+            
+        else:
+            # si pasa todos los filtros, encriptamos y guardamos
+            usuario.password = make_password(nueva_clave)
+            usuario.save()
+            return render(request, 'password_reset_done.html')
+            
+    return render(request, 'password_reset_form.html', {'validlink': True, 'error': error})

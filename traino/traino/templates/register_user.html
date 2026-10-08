@@ -13,8 +13,6 @@
 <body class="bg-bunker d-flex align-items-center justify-content-center min-vh-100 py-5">
 
     <div class="container" style="max-width: 460px;">
-    
-
         <div class="card card-bunker p-4">
             <h2 class="text-center mb-2 fw-bold font-urbanist text-white" style="letter-spacing: 1px;">TRAINO<span style="color: #ff0055;">.GG</span></h2>
             
@@ -24,14 +22,28 @@
                 </div>
             {% endif %}
 
-            <!-- Btn Google -->
-            <a href="#" class="btn btn-google w-100 mb-4 d-flex align-items-center justify-content-center gap-2">
-                <i class="bi bi-google text-danger"></i> Registrarse con Google
-            </a>
+            <!-- Sistema Real de Login Google -->
+            <div id="g_id_onload"
+                data-client_id="238189205547-irh68sqouu752u27uea1v47m5dg3uvpr.apps.googleusercontent.com" 
+                data-context="signup"
+                data-ux_mode="popup"
+                data-login_uri="http://localhost:8000/google-login/"
+                data-auto_prompt="false">
+            </div>
+            <div class="d-flex justify-content-center mb-4">
+                <div class="g_id_signin"
+                    data-type="standard"
+                    data-shape="rectangular"
+                    data-theme="outline"
+                    data-text="signup_with"
+                    data-size="large"
+                    data-logo_alignment="left">
+                </div>
+            </div>
 
             <!-- Separador -->
             <div class="divider-bunker mb-4">
-                <span>O CREÁ TU CUENTA MANUAL</span>
+                <span>O CREÁ TU CUENTA </span>
             </div>
 
             <form method="POST">
@@ -40,6 +52,11 @@
                 <div class="mb-3">
                     <label class="form-label label-gamer">Nombre Completo</label>
                     <input type="text" name="name" class="form-control input-bunker" placeholder="Ej: Fernando Fernandez" required autocomplete="off">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label label-gamer">Correo Electrónico (Obligatorio)</label>
+                    <input type="email" name="email" class="form-control input-bunker" placeholder="tu@correo.com" required autocomplete="email">
                 </div>
 
                 <div class="mb-3">
@@ -77,5 +94,22 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // mostrar/ocultar contraseña
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        }
+    </script>
 </body>
 </html>

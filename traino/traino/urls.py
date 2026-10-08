@@ -12,6 +12,11 @@ urlpatterns = [
     path('register/', views.UsuarioController.as_view(), name='register_user'),
     path('login/', views.LoginController.as_view(), name='login'),
     path('logout/', views.logout_view, name='logout'), 
+
+    # rutas para recuperar contraseñas
+    path('reset_password/', views.solicitar_recuperacion, name="reset_password"),
+    path('reset_password_sent/', views.recuperacion_enviada, name="password_reset_done"),
+    path('reset/<str:token>/', views.confirmar_recuperacion, name="password_reset_confirm"),
     
     # Endpoints Agenda
     path('crear-evento/', views.CrearEventoController.as_view(), name='create_event'),
