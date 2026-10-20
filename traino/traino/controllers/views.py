@@ -1,5 +1,7 @@
 import datetime
 import calendar
+import json
+import pandas as pd
 import os  # para poder leer variables de entorno - .env
 from django.views.decorators.csrf import csrf_exempt
 from google.oauth2 import id_token
@@ -9,7 +11,7 @@ from django.views import View
 from django.views.decorators.http import require_POST
 from django.contrib.auth import logout
 from django.contrib.auth.hashers import make_password, check_password
-from ..models.models import User, Player, Event, Attendance, CompetitiveTeam2026
+from ..models.models import User, Player, Map, MatchPerformance, Attendance, Event, CompetitiveTeam2026
 from ..src.singleton import SystemConfigSingleton
 from django.core.signing import TimestampSigner, SignatureExpired, BadSignature
 from django.core.mail import send_mail
@@ -78,27 +80,24 @@ def index(request):
     return redirect('login')
 
 def home(request):
-    # sesion del servidor
+    # sesion y autenticacion
     usuario_id = request.session.get('usuario_id')
-    
-    # Si no esta en la sesion, recurrimos al metodo GET como respaldo del grupo
     if not usuario_id:
         usuario_id = request.GET.get('usuario_id')
         
-    #  nos manda directo al login si nohay cuenta
     if not usuario_id:
         return redirect('login')
         
     try:
         usuario = User.objects.get(id=usuario_id)
-        # Sincronizamos la sesion por seguridad si entro usando el parametro GET
         request.session['usuario_id'] = usuario.id
     except User.DoesNotExist:
         request.session.flush()
         return redirect('login')
         
-    config_sistema = SystemConfigSingleton()
+    config_sistema = SystemConfigSingleton() if 'SystemConfigSingleton' in globals() else None
         
+    # agenda y asistencias
     meses = [
         {'numero': 1, 'nombre': 'Enero'}, {'numero': 2, 'nombre': 'Febrero'},
         {'numero': 3, 'nombre': 'Marzo'}, {'numero': 4, 'nombre': 'Abril'},
@@ -114,10 +113,11 @@ def home(request):
     except (TypeError, ValueError):
         mes_seleccionado = datetime.date.today().month
         
-    agenda, bloques_horarios = generar_agenda(mes_filtro=mes_seleccionado)
+    agenda, bloques_horarios = generar_agenda(mes_filtro=mes_seleccionado) if 'generar_agenda' in globals() else ([], [])
         
     historial_asistencias = []
     player_profile = getattr(usuario, 'player_profile', None)
+    
     if player_profile:
         asistencias_qs = Attendance.objects.filter(player=player_profile).order_by('-id')
         for item in asistencias_qs:
@@ -135,6 +135,60 @@ def home(request):
                 item.duracion_display = "--h --m"
             historial_asistencias.append(item)
 
+    # pandas en home
+
+    todos_los_jugadores = Player.objects.select_related('user').all()
+    jugador_actual = None
+
+    if usuario.role_type == 'player':
+        jugador_actual = player_profile
+    else:
+        player_id = request.GET.get('player_id')
+        if player_id:
+            jugador_actual = Player.objects.filter(id=player_id).first()
+        else:
+            for p in todos_los_jugadores:
+                if MatchPerformance.objects.filter(player=p).exists():
+                    jugador_actual = p
+                    break
+
+    sin_datos = True
+    kd_general = winrate_general = hs_promedio = total_fk = total_clutches = 0
+    mapas_nombres = "[]"
+    mapas_winrate = "[]"
+    historial_partidas = []
+
+    if jugador_actual:
+        partidas_qs = MatchPerformance.objects.filter(player=jugador_actual).values(
+            'map_played__name', 'match_type', 'result', 
+            'kills', 'deaths', 'assists', 
+            'headshot_percentage', 'first_kills', 'clutches', 'date_played'
+        ).order_by('-date_played')
+
+        if partidas_qs.exists():
+            sin_datos = False
+            df = pd.DataFrame(list(partidas_qs))
+
+            total_kills = int(df['kills'].sum())
+            total_deaths = int(df['deaths'].sum())
+            kd_general = round(total_kills / total_deaths, 2) if total_deaths > 0 else total_kills
+            winrate_general = round((df['result'] == 'WIN').mean() * 100, 1)
+            hs_promedio = round(df['headshot_percentage'].mean(), 1)
+            total_fk = int(df['first_kills'].sum())
+            total_clutches = int(df['clutches'].sum())
+
+            df['kd_partida'] = (df['kills'] / df['deaths'].replace(0, 1)).round(2)
+            df['es_victoria'] = (df['result'] == 'WIN').astype(int) * 100
+            
+            stats_por_mapa = df.groupby('map_played__name').agg(
+                winrate=('es_victoria', 'mean')
+            ).reset_index()
+
+            mapas_nombres = json.dumps(stats_por_mapa['map_played__name'].tolist())
+            mapas_winrate = json.dumps(stats_por_mapa['winrate'].round(1).tolist())
+            historial_partidas = df.to_dict('records')
+
+    # metemos todo en un contexto para mandarlo al front
     context = {
         'usuario': usuario,
         'agenda': agenda,
@@ -142,10 +196,24 @@ def home(request):
         'mes_seleccionado': mes_seleccionado,
         'meses': meses,
         'config': config_sistema,
-        'miro_boards': MIRO_BOARDS,
-        'historial_asistencias': historial_asistencias
+        'miro_boards': globals().get('MIRO_BOARDS', []),
+        'historial_asistencias': historial_asistencias,
+        
+        # Las variables que recibe el include de estadisticas:
+        'jugadores': todos_los_jugadores,
+        'jugador_actual': jugador_actual,
+        'sin_datos': sin_datos,
+        'kd_general': kd_general,
+        'winrate_general': winrate_general,
+        'hs_promedio': hs_promedio,
+        'total_fk': total_fk,
+        'total_clutches': total_clutches,
+        'mapas_nombres': mapas_nombres,
+        'mapas_winrate': mapas_winrate,
+        'historial_partidas': historial_partidas
     }
         
+    # Renderizados según el rol
     if usuario.role_type == 'coach':
         context['mensaje_exito'] = request.session.pop('mensaje_exito', None)
         context['mensaje_error'] = request.session.pop('mensaje_error', None)
@@ -153,7 +221,6 @@ def home(request):
         context['pool_mapas'] = ['Chalet', 'Banco', 'Clubhouse', 'Oregon', 'Border']
         
         anio_actual = datetime.date.today().year
-        
         context['todos_los_jugadores'] = User.objects.filter(role_type='player')
         context['proximos_eventos'] = Event.objects.filter(date__month=mes_seleccionado, date__year=anio_actual).order_by('date', 'scheduled_time')[:3]
         
@@ -169,7 +236,7 @@ def home(request):
         context['coaches'] = User.objects.filter(role_type='coach')
         context['equipos'] = CompetitiveTeam2026.objects.all().order_by('global_rank')
         return render(request, 'dashboard_admin.html', context)
-
+    
 @require_POST
 def toggle_coach_status(request):
     usuario_id = request.POST.get('usuario_id', '')
@@ -596,3 +663,91 @@ def confirmar_recuperacion(request, token):
             return render(request, 'password_reset_done.html')
             
     return render(request, 'password_reset_form.html', {'validlink': True, 'error': error})
+
+def dashboard_stats(request):
+    # 1. Obtenemos el usuario igual que en la función home
+    usuario_id = request.session.get('usuario_id') or request.GET.get('usuario_id')
+    usuario = User.objects.filter(id=usuario_id).first() if usuario_id else None
+
+    todos_los_jugadores = Player.objects.select_related('user').all()
+    jugador_actual = None
+
+    # 2. Si es player ve sus propias stats automáticamente. Si es coach/admin, puede elegir por GET.
+    if usuario and usuario.role_type == 'player':
+        jugador_actual = Player.objects.filter(user=usuario).first()
+    else:
+        player_id = request.GET.get('player_id')
+        if player_id:
+            jugador_actual = Player.objects.filter(id=player_id).first()
+        else:
+            # Si no eligió ninguno, agarramos el primero disponible con partidas
+            for p in todos_los_jugadores:
+                if MatchPerformance.objects.filter(player=p).exists():
+                    jugador_actual = p
+                    break
+            if not jugador_actual:
+                jugador_actual = todos_los_jugadores.first()
+
+    if not jugador_actual:
+        return render(request, 'dashboard_stats.html', {
+            'usuario': usuario,
+            'jugadores': todos_los_jugadores,
+            'jugador_actual': None,
+            'sin_datos': True
+        })
+
+    # 3. Traemos las partidas de la base de datos
+    partidas_qs = MatchPerformance.objects.filter(player=jugador_actual).values(
+        'map_played__name', 'match_type', 'result', 
+        'kills', 'deaths', 'assists', 
+        'headshot_percentage', 'first_kills', 'clutches', 'date_played'
+    ).order_by('-date_played')
+
+    if not partidas_qs.exists():
+        return render(request, 'dashboard_stats.html', {
+            'usuario': usuario,
+            'jugadores': todos_los_jugadores,
+            'jugador_actual': jugador_actual,
+            'sin_datos': True
+        })
+
+    # ==========================================
+    # MOTOR PANDAS
+    # ==========================================
+    df = pd.DataFrame(list(partidas_qs))
+
+    total_kills = int(df['kills'].sum())
+    total_deaths = int(df['deaths'].sum())
+    kd_general = round(total_kills / total_deaths, 2) if total_deaths > 0 else total_kills
+    winrate_general = round((df['result'] == 'WIN').mean() * 100, 1)
+    hs_promedio = round(df['headshot_percentage'].mean(), 1)
+    total_fk = int(df['first_kills'].sum())
+    total_clutches = int(df['clutches'].sum())
+
+    df['kd_partida'] = (df['kills'] / df['deaths'].replace(0, 1)).round(2)
+    df['es_victoria'] = (df['result'] == 'WIN').astype(int) * 100
+    
+    stats_por_mapa = df.groupby('map_played__name').agg(
+        winrate=('es_victoria', 'mean')
+    ).reset_index()
+
+    mapas_nombres = json.dumps(stats_por_mapa['map_played__name'].tolist())
+    mapas_winrate = json.dumps(stats_por_mapa['winrate'].round(1).tolist())
+    historial_partidas = df.to_dict('records')
+
+    context = {
+        'usuario': usuario,
+        'jugadores': todos_los_jugadores,
+        'jugador_actual': jugador_actual,
+        'kd_general': kd_general,
+        'winrate_general': winrate_general,
+        'hs_promedio': hs_promedio,
+        'total_fk': total_fk,
+        'total_clutches': total_clutches,
+        'mapas_nombres': mapas_nombres,
+        'mapas_winrate': mapas_winrate,
+        'historial_partidas': historial_partidas,
+        'sin_datos': False
+    }
+
+    return render(request, 'dashboard_stats.html', context)

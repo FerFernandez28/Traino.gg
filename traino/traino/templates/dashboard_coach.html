@@ -37,6 +37,11 @@
                     </div>
                 </li>
                 <li>
+                    <div id="btn-show-stats" class="sidebar-link">
+                        <i class="bi bi-graph-up-arrow"></i> Estadísticas
+                    </div>
+                </li>
+                <li>
                     <div id="btn-show-profile" class="sidebar-link">
                         <i class="bi bi-person-gear"></i> Mi Perfil
                     </div>
@@ -284,6 +289,12 @@
                 </div>
             </section>
 
+            <section id="section-stats" style="display: none;">
+                <div>
+                    {% include 'dashboard_stats.html' %}
+                </div>
+            </section>
+
             <!-- perfil -->
             <section id="section-profile" class="dashboard-panel animate-fade-in" style="display: none;">
                 <div class="p-4" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #334155; border-radius: 12px;">
@@ -519,7 +530,8 @@
             'btn-show-calendar': document.getElementById('section-calendar'),
             'btn-show-profile': document.getElementById('section-profile'),
             'btn-show-miro': document.getElementById('section-miro'),
-            'btn-show-attendance': document.getElementById('section-attendance')
+            'btn-show-attendance': document.getElementById('section-attendance'),
+            'btn-show-stats': document.getElementById('section-stats')
         };
 
         const formMesFiltro = document.getElementById('form-mes-filtro');

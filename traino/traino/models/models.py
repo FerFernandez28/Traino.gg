@@ -84,3 +84,43 @@ class CompetitiveTeam2026(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.get_region_display()})"
+
+#  estadisticas
+
+class Map(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    # cover_image = models.ImageField(upload_to='maps/', null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class MatchPerformance(models.Model):
+    MATCH_TYPES = [
+        ('SCRIM', 'Entrenamiento Privado (Scrim)'),
+        ('RANKED', 'Competitiva Oficial (Ranked)'),
+    ]
+
+    RESULT_CHOICES = [
+        ('WIN', 'Victoria'),
+        ('LOSS', 'Derrota'),
+    ]
+
+    # relaciones
+    player = models.ForeignKey('Player', on_delete=models.CASCADE, related_name='match_performances')
+    map_played = models.ForeignKey(Map, on_delete=models.PROTECT) # protect para que no se borren partidas si alguien borra un mapa sin querer
+    
+    # contexto del encuentro
+    match_type = models.CharField(max_length=20, choices=MATCH_TYPES, default='SCRIM')
+    result = models.CharField(max_length=10, choices=RESULT_CHOICES)
+    date_played = models.DateTimeField(auto_now_add=True)
+
+    # estadisticas
+    kills = models.IntegerField(default=0)
+    deaths = models.IntegerField(default=0)
+    assists = models.IntegerField(default=0)
+    headshot_percentage = models.FloatField(default=0.0)
+    first_kills = models.IntegerField(default=0)
+    clutches = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"[{self.result}] {self.player.user.username} en {self.map_played.name}"

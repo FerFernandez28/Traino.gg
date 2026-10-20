@@ -1,0 +1,164 @@
+{% load static %}
+<div class="container-fluid px-0 py-3">
+    
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+        <div>
+            <h2 class="fw-bold font-urbanist text-white mb-0" style="letter-spacing: 1px;">
+                CENTRO DE RENDIMIENTO TÁCTICO
+            </h2>
+            <small class="text-white-50">Análisis de rendimiento competitivo de escuadra</small>
+        </div>
+
+        <!-- el coach o admin tienen un selector, si es Player ve sus datos automaticamente -->
+        {% if usuario and usuario.role_type != 'player' %}
+        <form method="GET" class="d-flex align-items-center gap-2 mt-3 mt-md-0">
+            <label class="text-white-50 small me-1">Operador:</label>
+            <select name="player_id" class="form-select text-white" style="background-color: #0f172a; border-color: #ff0055;" onchange="this.form.submit()">
+                {% for p in jugadores %}
+                    <option value="{{ p.id }}" {% if jugador_actual and p.id == jugador_actual.id %}selected{% endif %}>
+                        {{ p.user.username }} ({{ p.team_name }})
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+        {% else %}
+        <div class="text-end">
+            <span class="badge px-3 py-2 text-white" style="background-color: #1e293b; border: 1px solid #ff0055;">
+                Operador: <strong style="color: #ff0055;">{{ jugador_actual.user.username|default:"Actual" }}</strong>
+            </span>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if sin_datos %}
+        <div class="card p-5 text-center text-white" style="background-color: #0f172a; border: 1px solid #1e293b;">
+            <h4>No se encontraron registros de rendimiento para este operador.</h4>
+        </div>
+    {% else %}
+
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="card p-3 text-center" style="background-color: #0f172a; border: 1px solid #1e293b; border-top: 3px solid #ff0055;">
+                    <span class="text-white-50 small">K/D RATIO</span>
+                    <h2 class="text-white fw-bold mb-0 mt-1">{{ kd_general }}</h2>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card p-3 text-center" style="background-color: #0f172a; border: 1px solid #1e293b; border-top: 3px solid #00ff88;">
+                    <span class="text-white-50 small">WINRATE</span>
+                    <h2 class="text-white fw-bold mb-0 mt-1">{{ winrate_general }}%</h2>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card p-3 text-center" style="background-color: #0f172a; border: 1px solid #1e293b; border-top: 3px solid #0dcaf0;">
+                    <span class="text-white-50 small">HEADSHOTS (HS%)</span>
+                    <h2 class="text-white fw-bold mb-0 mt-1">{{ hs_promedio }}%</h2>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card p-3 text-center" style="background-color: #0f172a; border: 1px solid #1e293b; border-top: 3px solid #ffc107;">
+                    <span class="text-white-50 small">FIRST KILLS / 1vX</span>
+                    <h2 class="text-white fw-bold mb-0 mt-1">{{ total_fk }} <span class="text-white-50 fs-5">/ {{ total_clutches }}</span></h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-4 mb-4" style="background-color: #0f172a; border: 1px solid #1e293b;">
+            <h6 class="text-white text-uppercase mb-3" style="letter-spacing: 1px;">Efectividad y Winrate por Mapa</h6>
+            <div id="graficoMapas"></div>
+        </div>
+
+        <div class="card p-4" style="background-color: #0f172a; border: 1px solid #1e293b;">
+            <h6 class="text-white text-uppercase mb-3" style="letter-spacing: 1px;">Historial de Partidas // Scoreboard</h6>
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0" style="background-color: transparent;">
+                    <thead>
+                        <tr class="text-white-50 small border-bottom border-secondary">
+                            <th title="Mapa Jugado">MAPA</th>
+                            <th title="Modo de Juego">MODO</th>
+                            <th title="Resultado de la Partida">RESULTADO</th>
+                            <th class="text-center" title="Kills / Deaths (Proporción de Bajas y Muertes)">KD</th>
+                            <th class="text-center" style="color: #ff0055;" title="Kills (Bajas)">K</th>
+                            <th class="text-center" title="Deaths (Muertes)">D</th>
+                            <th class="text-center" title="Asistencias">A</th>
+                            <th class="text-center" title="Headshot Percentage (Porcentaje de tiros a la cabeza)">HS%</th>
+                            <th class="text-center" title="First Kills (Primera baja de la ronda)">FK</th>
+                            <th class="text-center" title="Clutches (Rondas ganadas 1 contra varios)">1vX</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for match in historial_partidas %}
+                        <tr class="border-bottom border-secondary">
+                            <td class="fw-bold text-white">{{ match.map_played__name }}</td>
+                            <td><span class="badge bg-secondary">{{ match.match_type }}</span></td>
+                            <td>
+                                {% if match.result == 'WIN' %}
+                                    <span class="badge" style="background-color: rgba(0, 255, 136, 0.15); color: #00ff88; border: 1px solid #00ff88;">WIN</span>
+                                {% else %}
+                                    <span class="badge" style="background-color: rgba(255, 0, 85, 0.15); color: #ff0055; border: 1px solid #ff0055;">LOSS</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center fw-bold {% if match.kd_partida >= 1.0 %}text-white{% else %}text-white-50{% endif %}">
+                                {{ match.kd_partida }}
+                            </td>
+                            <td class="text-center fw-bold text-white">{{ match.kills }}</td>
+                            <td class="text-center text-white-50">{{ match.deaths }}</td>
+                            <td class="text-center text-white-50">{{ match.assists }}</td>
+                            <td class="text-center text-white">{{ match.headshot_percentage }}%</td>
+                            <td class="text-center text-white">{{ match.first_kills }}</td>
+                            <td class="text-center text-white">{{ match.clutches }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    {% endif %}
+</div>
+
+{% if not sin_datos %}
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<script>
+    const nombresMapas = JSON.parse('{{ mapas_nombres|escapejs }}' || '[]');
+    const winrateMapas = JSON.parse('{{ mapas_winrate|escapejs }}' || '[]');
+
+    if (nombresMapas && nombresMapas.length > 0) {
+        var options = {
+            series: [{
+                name: 'Winrate %',
+                data: winrateMapas
+            }],
+            chart: {
+                type: 'bar',
+                height: 300,
+                background: 'transparent',
+                toolbar: { show: false }
+            },
+            colors: ['#ff0055'],
+            plotOptions: {
+                bar: { borderRadius: 4, columnWidth: '45%' }
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: function (val) { return val + "%"; },
+                style: { colors: ['#fff'] }
+            },
+            xaxis: {
+                categories: nombresMapas,
+                labels: { style: { colors: '#94a3b8' } }
+            },
+            yaxis: {
+                max: 100,
+                labels: { style: { colors: '#94a3b8' } }
+            },
+            theme: { mode: 'dark' },
+            grid: { borderColor: '#1e293b', strokeDashArray: 4 }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#graficoMapas"), options);
+        chart.render();
+    }
+</script>
+{% endif %}

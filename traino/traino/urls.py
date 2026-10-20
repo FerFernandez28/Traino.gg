@@ -35,6 +35,8 @@ urlpatterns = [
     path('editar_jugador_admin/', views.editar_jugador_admin, name='editar_jugador_admin'),
 
     path('google-login/', views.google_login, name='google_login'),
+
+    path('stats/', views.dashboard_stats, name='dashboard_stats'),
 ]
 
 if settings.DEBUG:

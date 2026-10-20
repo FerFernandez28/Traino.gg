@@ -351,6 +351,11 @@
                 </div>
             </section>
 
+            <section id="section-stats" style="display: none;">
+                <div>
+                    {% include 'dashboard_stats.html' %}
+                </div>
+            </section>
         </div>
 
         <div class="d-flex justify-content-between align-items-center border-top border-secondary pt-3 mt-5" style="opacity: 0.85;">
@@ -409,7 +414,8 @@
                 'btn-show-calendar': document.getElementById('section-calendar'),
                 'btn-show-profile': document.getElementById('section-profile'),
                 'btn-show-miro': document.getElementById('section-miro'),
-                'btn-show-attendance': document.getElementById('section-attendance')
+                'btn-show-attendance': document.getElementById('section-attendance'),
+                'btn-show-stats': document.getElementById('section-stats')
             };
 
             function switchSection(btnId) {

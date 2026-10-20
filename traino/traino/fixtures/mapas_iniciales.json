@@ -1,0 +1,11 @@
+[
+    { "model": "traino.map", "pk": 1, "fields": { "name": "Border" } },
+    { "model": "traino.map", "pk": 2, "fields": { "name": "Clubhouse" } },
+    { "model": "traino.map", "pk": 3, "fields": { "name": "Chalet" } },
+    { "model": "traino.map", "pk": 4, "fields": { "name": "Oregon" } },
+    { "model": "traino.map", "pk": 5, "fields": { "name": "Bank" } },
+    { "model": "traino.map", "pk": 6, "fields": { "name": "Kafe Dostoyevsky" } },
+    { "model": "traino.map", "pk": 7, "fields": { "name": "Skyscraper" } },
+    { "model": "traino.map", "pk": 8, "fields": { "name": "Consulate" } },
+    { "model": "traino.map", "pk": 9, "fields": { "name": "Nighthaven Labs" } }
+]
