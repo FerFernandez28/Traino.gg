@@ -15,6 +15,7 @@ from ..models.models import User, Player, Map, MatchPerformance, Attendance, Eve
 from ..src.singleton import SystemConfigSingleton
 from django.core.signing import TimestampSigner, SignatureExpired, BadSignature
 from django.core.mail import send_mail
+from django.core.management import call_command
 from django.utils.html import strip_tags
 from django.conf import settings
 
@@ -261,6 +262,8 @@ class UsuarioController(View):
         nickname_web = request.POST.get('nickname')
         email_web = request.POST.get('email')
         password_web = request.POST.get('password')
+        # que rol nos trae el form (por defecto player)
+        role_web = request.POST.get('role_type', 'player')
 
         if not nickname_web or not email_web or not password_web:
             return render(request, 'register_user.html', {'mensaje_error': 'Error: Todos los campos son obligatorios.'})
@@ -282,11 +285,12 @@ class UsuarioController(View):
                 username=nickname_web, 
                 email=email_web, 
                 password=password_hasheada, 
-                role_type='player'
+                role_type=role_web 
             )
 
-            # Creamos la ficha del jugador
-            Player.objects.create(position_role='A Definir', team_name='9z Team', user=nuevo_usuario)
+            # se crea sola la ficha de la tabla player si el rol no es Coach
+            if role_web == 'player':
+                Player.objects.create(position_role='A Definir', team_name='9z Team', user=nuevo_usuario)
 
             return redirect('login')
         except Exception as e:
@@ -711,9 +715,7 @@ def dashboard_stats(request):
             'sin_datos': True
         })
 
-    # ==========================================
-    # MOTOR PANDAS
-    # ==========================================
+    #PANDAS
     df = pd.DataFrame(list(partidas_qs))
 
     total_kills = int(df['kills'].sum())
@@ -751,3 +753,29 @@ def dashboard_stats(request):
     }
 
     return render(request, 'dashboard_stats.html', context)
+
+
+def generar_stats_simuladas(request):
+    if request.method == 'POST':
+        player_id = request.POST.get('player_id')
+        if player_id:
+            jugador = Player.objects.filter(id=player_id).first()
+            mapas = Map.objects.all()
+            
+            # le suma al jugador faltante, sin borrar el historial del equipo
+            if jugador and mapas.exists():
+                for _ in range(5):
+                    MatchPerformance.objects.create(
+                        player=jugador,
+                        map_played=random.choice(mapas),
+                        match_type=random.choice(['SCRIM', 'RANKED']),
+                        result=random.choices(['WIN', 'LOSS'], weights=[60, 40])[0],
+                        kills=random.randint(4, 15),
+                        deaths=random.randint(3, 10),
+                        assists=random.randint(0, 6),
+                        headshot_percentage=round(random.uniform(30.0, 65.0), 1),
+                        first_kills=random.randint(0, 4),
+                        clutches=random.randint(0, 2)
+                    )
+                    
+    return redirect(f"/home?usuario_id={request.session.get('usuario_id')}&player_id={player_id}")

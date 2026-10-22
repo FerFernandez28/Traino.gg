@@ -33,6 +33,18 @@
     {% if sin_datos %}
         <div class="card p-5 text-center text-white" style="background-color: #0f172a; border: 1px solid #1e293b;">
             <h4>No se encontraron registros de rendimiento para este operador.</h4>
+            
+            <!-- si el user no es jugador, le muestra el boton a coach-->
+            {% if usuario and usuario.role_type != 'player' and jugador_actual %}
+            <form method="POST" action="{% url 'generar_stats_simuladas' %}" class="mt-4">
+                {% csrf_token %}
+                <!-- se le manda el id al jugador q no tiene nada para que el script sepa a quien llenarle con data -->
+                <input type="hidden" name="player_id" value="{{ jugador_actual.id }}">
+                <button type="submit" class="btn text-white fw-bold px-4 py-2" style="background-color: #ff0055; border: none; border-radius: 8px;">
+                    <i class="bi bi-magic"></i>Script de Partidas
+                </button>
+            </form>
+            {% endif %}
         </div>
     {% else %}
 

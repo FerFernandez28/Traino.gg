@@ -3,6 +3,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from traino.controllers import views
+from traino.controllers.views import generar_stats_simuladas
 
 urlpatterns = [
     path('', views.index, name='inicio'),
@@ -37,6 +38,8 @@ urlpatterns = [
     path('google-login/', views.google_login, name='google_login'),
 
     path('stats/', views.dashboard_stats, name='dashboard_stats'),
+
+    path('simular-stats/', generar_stats_simuladas, name='generar_stats_simuladas')
 ]
 
 if settings.DEBUG:
