@@ -23,6 +23,7 @@ class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='player_profile')
 
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True, verbose_name="Foto de Perfil Oficial")
+    banner = models.ImageField(upload_to='banners/', blank=True, null=True, verbose_name="Banner de Perfil")
     biography = models.TextField(blank=True, null=True, default='', verbose_name="Nota Táctica o Historial Personal")
 
     def __str__(self):

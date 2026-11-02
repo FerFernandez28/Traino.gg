@@ -3,6 +3,7 @@ import calendar
 import json
 import pandas as pd
 import os  # para poder leer variables de entorno - .env
+import random
 from django.views.decorators.csrf import csrf_exempt
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
@@ -137,7 +138,6 @@ def home(request):
             historial_asistencias.append(item)
 
     # pandas en home
-
     todos_los_jugadores = Player.objects.select_related('user').all()
     jugador_actual = None
 
@@ -155,6 +155,7 @@ def home(request):
 
     sin_datos = True
     kd_general = winrate_general = hs_promedio = total_fk = total_clutches = 0
+    total_kills = total_deaths = victorias = derrotas = 0
     mapas_nombres = "[]"
     mapas_winrate = "[]"
     historial_partidas = []
@@ -172,6 +173,9 @@ def home(request):
 
             total_kills = int(df['kills'].sum())
             total_deaths = int(df['deaths'].sum())
+            victorias = int((df['result'] == 'WIN').sum())
+            derrotas = int((df['result'] == 'LOSS').sum())
+            
             kd_general = round(total_kills / total_deaths, 2) if total_deaths > 0 else total_kills
             winrate_general = round((df['result'] == 'WIN').mean() * 100, 1)
             hs_promedio = round(df['headshot_percentage'].mean(), 1)
@@ -189,7 +193,11 @@ def home(request):
             mapas_winrate = json.dumps(stats_por_mapa['winrate'].round(1).tolist())
             historial_partidas = df.to_dict('records')
 
-    # metemos todo en un contexto para mandarlo al front
+    # Agenda global de eventos para todos (Coach y Players)
+    anio_actual = datetime.date.today().year
+    proximos_eventos = Event.objects.filter(date__month=mes_seleccionado, date__year=anio_actual).order_by('date', 'scheduled_time')[:3]
+
+    # todo en el context
     context = {
         'usuario': usuario,
         'agenda': agenda,
@@ -199,8 +207,9 @@ def home(request):
         'config': config_sistema,
         'miro_boards': globals().get('MIRO_BOARDS', []),
         'historial_asistencias': historial_asistencias,
+        'proximos_eventos': proximos_eventos,
         
-        # Las variables que recibe el include de estadisticas:
+        # Stats reales desde la BD:
         'jugadores': todos_los_jugadores,
         'jugador_actual': jugador_actual,
         'sin_datos': sin_datos,
@@ -209,6 +218,10 @@ def home(request):
         'hs_promedio': hs_promedio,
         'total_fk': total_fk,
         'total_clutches': total_clutches,
+        'total_kills': total_kills,
+        'total_deaths': total_deaths,
+        'victorias': victorias,
+        'derrotas': derrotas,
         'mapas_nombres': mapas_nombres,
         'mapas_winrate': mapas_winrate,
         'historial_partidas': historial_partidas
@@ -220,10 +233,7 @@ def home(request):
         context['mensaje_error'] = request.session.pop('mensaje_error', None)
         context['is_connected'] = request.session.get('coach_connected', False)
         context['pool_mapas'] = ['Chalet', 'Banco', 'Clubhouse', 'Oregon', 'Border']
-        
-        anio_actual = datetime.date.today().year
         context['todos_los_jugadores'] = User.objects.filter(role_type='player')
-        context['proximos_eventos'] = Event.objects.filter(date__month=mes_seleccionado, date__year=anio_actual).order_by('date', 'scheduled_time')[:3]
         
         return render(request, 'dashboard_coach.html', context)
         
@@ -419,6 +429,7 @@ class EditarPerfilController(View):
         nuevo_nombre = request.POST.get('name') 
         biografia_web = request.POST.get('biography', '').strip()
         avatar_web = request.FILES.get('avatar')
+        banner_web = request.FILES.get('banner')
 
         if not usuario_id:
             return redirect('login')
@@ -437,6 +448,9 @@ class EditarPerfilController(View):
                 
                 if avatar_web:
                     player_profile.avatar = avatar_web
+                
+                if banner_web:
+                    player_profile.banner = banner_web
                 
                 player_profile.save()
 
@@ -591,22 +605,18 @@ def google_login(request):
     return redirect('login')
 
 
-# Fabricante de tokens seguros
+# fabricante de tokens seguros
 signer = TimestampSigner()
 
 def solicitar_recuperacion(request):
     if request.method == 'POST':
-        email_web = request.POST.get('email')
-        usuario = User.objects.filter(email=email_web).first()
+        email_web = request.POST.get('email', '').strip()
+        usuario = User.objects.filter(email__iexact=email_web).first()
         
-        if usuario:
-            # Fabricamos un Token firmado con el ID del usuario
+        if usuario and usuario.email:
             token = signer.sign(str(usuario.id))
-            
-            # Armamos el link exacto
             reset_link = f"http://localhost:8000/reset/{token}/"
             
-            # Diseñamos el mail modo Búnker
             asunto = 'Traino.GG - Recuperación de Acceso'
             html_message = f"""
             <div style="background-color: #0f172a; color: white; padding: 30px; font-family: sans-serif; text-align: center; border-radius: 10px;">
@@ -620,12 +630,16 @@ def solicitar_recuperacion(request):
             plain_message = strip_tags(html_message)
             
             try:
-                # Manda el correo
                 send_mail(
-                    asunto, plain_message, settings.EMAIL_HOST_USER, [usuario.email], html_message=html_message, fail_silently=False
+                    asunto, 
+                    plain_message, 
+                    settings.DEFAULT_FROM_EMAIL if hasattr(settings, 'DEFAULT_FROM_EMAIL') else settings.EMAIL_HOST_USER, 
+                    [usuario.email], 
+                    html_message=html_message, 
+                    fail_silently=False
                 )
             except Exception as e:
-                print(f"ERROR AL ENVIAR MAIL: {e}")
+                print(f"=== ERROR CRÍTICO SMTP ===: {e}")
                 
         return redirect('password_reset_done')
     
