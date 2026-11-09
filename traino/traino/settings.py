@@ -36,7 +36,7 @@ ROOT_URLCONF = 'traino.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.DjangoTemplates',
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'traino' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
