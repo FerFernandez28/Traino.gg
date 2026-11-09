@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Traino - Panel del Coach</title>
+    <!--pwa -->
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#ff0055">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="{% static 'images/icon-192.png' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700&display=swap" rel="stylesheet">
@@ -12,62 +18,14 @@
 </head>
 <body>
 
-    <div class="sidebar-container">
-        <div>
-            <a class="sidebar-brand" href="#">TRAINO<span>.COACH</span></a>
-            <ul class="sidebar-menu">
-                <li>
-                    <div id="btn-show-dashboard" class="sidebar-link active">
-                        <i class="bi bi-grid-1x2-fill"></i> Dashboard
-                    </div>
-                </li>
-                <li>
-                    <div id="btn-show-calendar" class="sidebar-link">
-                        <i class="bi bi-calendar3"></i> Agenda Tactica
-                    </div>
-                </li>
-                <li>
-                    <div id="btn-show-miro" class="sidebar-link">
-                        <i class="bi bi-clipboard2-data-fill"></i> Estrategias Miro
-                    </div>
-                </li>
-                <li>
-                    <div id="btn-show-attendance" class="sidebar-link">
-                        <i class="bi bi-person-check-fill"></i> Control de Asistencias
-                    </div>
-                </li>
-                <li>
-                    <div id="btn-show-stats" class="sidebar-link">
-                        <i class="bi bi-graph-up-arrow"></i> Estadísticas
-                    </div>
-                </li>
-                <li>
-                    <div id="btn-show-profile" class="sidebar-link">
-                        <i class="bi bi-person-gear"></i> Mi Perfil
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div class="sidebar-footer">
-            {% if usuario %}
-            <div class="sidebar-user-card">
-                <div class="user-avatar-mini" style="background: linear-gradient(135deg, #ff0055, #7c3aed);">CH</div>
-                <div class="overflow-hidden">
-                    <h6 class="text-white mb-0 text-truncate" style="font-size: 0.85rem;">{{ usuario.username }}</h6>
-                    <small class="text-warning text-uppercase" style="font-size: 0.65rem;">{{ usuario.role_type }}</small>
-                </div>
-            </div>
-            {% endif %}
-            <a href="{% url 'login' %}" class="btn btn-logout-sidebar"><i class="bi bi-box-arrow-left"></i> Cerrar Sesión</a>
-        </div>
-    </div>
+    {% include 'components/sidebar.html' %}
 
-    <div style="margin-left: 260px; padding: 40px; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between;">
+    <div class="main-wrapper-content">
         
         <div>
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
                 
-                <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
                     <span id="indicador-modo" class="badge rounded-pill p-2 px-3 bg-success text-black fw-bold">● MODO EDICION VIVO</span>
                     
                     <form method="GET" action="" class="d-flex align-items-center gap-2 m-0" id="form-mes-filtro" style="display: none !important;">
@@ -91,18 +49,18 @@
 
             <!-- panel dash-->
             <section id="section-dashboard" class="dashboard-panel animate-fade-in">
-                <div class="d-flex align-items-center justify-content-between mb-4 px-3">
+                <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4 px-2 px-md-3">
                     <div>
-                        <h1 class="font-urbanist fw-bold mb-0">CENTRO DE <span style="color: #ff0055;">MANDO TÁCTICO</span></h1>
+                        <h1 class="font-urbanist fw-bold mb-0 fs-3 fs-md-1">CENTRO DE <span style="color: #ff0055;">MANDO TÁCTICO</span></h1>
                         <small class="text-white-50">Gestión de Plantel y Programación de Entrenamientos</small>
                     </div>
                     
-                    <span class="badge d-none d-md-inline-block" style="background-color: rgba(255, 0, 85, 0.1); color: #ff0055; border: 1px solid rgba(255, 0, 85, 0.3); padding: 8px 14px;">
+                    <span class="badge" style="background-color: rgba(255, 0, 85, 0.1); color: #ff0055; border: 1px solid rgba(255, 0, 85, 0.3); padding: 8px 14px;">
                         <i class="bi bi-record-circle me-1"></i> DIRECCIÓN ACTIVA
                     </span>
                 </div>
                 
-                <div class="row g-4 px-3 mt-1">
+                <div class="row g-4 px-0 px-md-3 mt-1">
                     <div class="col-12 col-xl-8">
                         <div class="row g-4 mb-4">
                             <!-- Winrate del Equipo -->
@@ -112,7 +70,7 @@
                                     <h4 class="text-uppercase mb-3 font-urbanist fw-bold" style="font-size: 0.8rem; letter-spacing: 1.5px; color: #ff0055;">Winrate Colectivo</h4>
                                     
                                     <div class="d-flex align-items-end gap-3 mb-3">
-                                        <span class="font-urbanist fw-bold" style="font-size: 3rem; color: white; line-height: 1;">
+                                        <span class="font-urbanist fw-bold" style="font-size: clamp(2rem, 5vw, 3rem); color: white; line-height: 1;">
                                             {{ winrate_general|default:0 }}<span style="font-size: 1.5rem; color: #ff0055;">%</span>
                                         </span>
                                     </div>
@@ -134,7 +92,7 @@
                                     <h4 class="text-uppercase mb-3 font-urbanist fw-bold" style="font-size: 0.8rem; letter-spacing: 1.5px; color: #3b82f6;">Plantel Roster</h4>
                                     
                                     <div class="d-flex align-items-end gap-3 mb-3">
-                                        <span class="font-urbanist fw-bold" style="font-size: 3rem; color: white; line-height: 1;">
+                                        <span class="font-urbanist fw-bold" style="font-size: clamp(2rem, 5vw, 3rem); color: white; line-height: 1;">
                                             {{ todos_los_jugadores.count|default:0 }}
                                         </span>
                                         <span class="text-white-50 mb-2 small">Jugadores Registrados</span>
@@ -148,8 +106,8 @@
                         </div>
 
                         <!-- Agenda Operativa / Actividades del Coach -->
-                        <div class="p-4 shadow-sm" style="background-color: #0f172a; border: 1px solid #1e293b; border-radius: 16px;">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="p-3 p-md-4 shadow-sm" style="background-color: #0f172a; border: 1px solid #1e293b; border-radius: 16px;">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 mb-4">
                                 <h4 class="text-uppercase mb-0 font-urbanist fw-bold text-white-50" style="font-size: 0.8rem; letter-spacing: 1.5px;">Cronograma Táctico</h4>
                                 <button type="button" class="btn btn-sm btn-outline-secondary" style="font-size: 0.75rem;" onclick="document.getElementById('btn-show-calendar').click()">Gestionar Agenda <i class="bi bi-arrow-right"></i></button>
                             </div>
@@ -193,7 +151,7 @@
                     </div>
                     <div class="col-12 col-xl-4">
                         <!-- Estado de Asistencia del Roster -->
-                        <div class="p-4 shadow-sm mb-4" style="background-color: #0f172a; border: 1px solid #1e293b; border-radius: 16px;">
+                        <div class="p-3 p-md-4 shadow-sm mb-4" style="background-color: #0f172a; border: 1px solid #1e293b; border-radius: 16px;">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="text-white-50 fw-bold small text-uppercase tracking-wider">Supervisión de Plantel</span>
                                 <i class="bi bi-person-check fs-5" style="color: #ff0055;"></i>
@@ -220,7 +178,7 @@
                         </div>
 
                         <!-- accesos rapidos -->
-                        <div class="p-4 shadow-sm" style="background-color: #0f172a; border: 1px solid #1e293b; border-radius: 16px;">
+                        <div class="p-3 p-md-4 shadow-sm" style="background-color: #0f172a; border: 1px solid #1e293b; border-radius: 16px;">
                             <h4 class="text-uppercase mb-3 font-urbanist fw-bold text-white-50" style="font-size: 0.8rem; letter-spacing: 1.5px;">Acciones de Dirección</h4>
                             
                             <div class="d-grid gap-2">
@@ -236,8 +194,8 @@
 
             <!-- agenda visual -->
             <section id="section-calendar" class="dashboard-panel animate-fade-in" style="display: none;">
-                <div class="agenda-container mb-4" id="agendaScrollContainer">
-                    <table class="table align-middle m-0 table-agenda">
+                <div class="agenda-container mb-4 table-responsive" id="agendaScrollContainer" style="border-radius: 12px; border: 1px solid #1e293b;">
+                    <table class="table align-middle m-0 table-agenda text-nowrap">
                         <thead>
                             <tr>
                                 <th class="day-header">Día</th>
@@ -343,7 +301,7 @@
                     </table>
                 </div>
 
-                <div class="d-flex gap-4 justify-content-center mt-4 flex-wrap" style="font-size: 0.85rem;">
+                <div class="d-flex gap-3 justify-content-center mt-4 flex-wrap" style="font-size: 0.85rem;">
                     <div class="d-flex align-items-center gap-2"><div style="width: 14px; height: 14px; background-color: #dcfce7; border-left: 3px solid #22c55e; border-radius: 3px;"></div><span class="text-white-50">Warmup / Entrenamiento</span></div>
                     <div class="d-flex align-items-center gap-2"><div style="width: 14px; height: 14px; background-color: #dbeafe; border-left: 3px solid #3b82f6; border-radius: 3px;"></div><span class="text-white-50">Scrims / Partidos</span></div>
                     <div class="d-flex align-items-center gap-2"><div style="width: 14px; height: 14px; background-color: #f3e8ff; border-left: 3px solid #a855f7; border-radius: 3px;"></div><span class="text-white-50">Análisis / VOD Review</span></div>
@@ -359,13 +317,13 @@
             </section>
 
             <section id="section-profile" class="dashboard-panel animate-fade-in" style="display: none;">
-                <h1 class="font-urbanist fw-bold mb-4">EXPEDIENTE DEL <span style="color: #ff0055;">COACH</span></h1>
+                <h1 class="font-urbanist fw-bold mb-4 fs-3 fs-md-1">EXPEDIENTE DEL <span style="color: #ff0055;">COACH</span></h1>
 
                 <!-- Banner y Header del Perfil -->
                 <div class="position-relative mb-4 rounded-4 overflow-hidden border border-secondary shadow-lg" style="background-color: #020617;">
                     
                     <!-- Imagen de Banner con Overlay -->
-                    <div class="position-relative" style="height: 200px; background: url('{% if usuario.coach_profile.banner %}{{ usuario.coach_profile.banner.url }}{% else %}https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1470&auto=format&fit=crop{% endif %}') center/cover no-repeat;">
+                    <div class="position-relative" style="height: 180px; background: url('{% if usuario.coach_profile.banner %}{{ usuario.coach_profile.banner.url }}{% else %}https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1470&auto=format&fit=crop{% endif %}') center/cover no-repeat;">
                         <div class="position-absolute w-100 h-100" style="background: linear-gradient(to bottom, transparent, #0f172a);"></div>
                         
                         <button type="button" class="btn btn-dark btn-sm position-absolute top-0 end-0 m-3 opacity-75 hover-opacity-100 border-secondary" onclick="document.getElementById('input-banner-coach').click();" style="backdrop-filter: blur(4px);">
@@ -374,13 +332,13 @@
                     </div>
 
                     <!-- Contenido del Header: Avatar + Datos -->
-                    <div class="px-4 pb-4 position-relative" style="margin-top: -60px;">
-                        <div class="d-flex flex-column flex-md-row align-items-center align-items-md-end gap-4">
-                            <div class="position-relative">
+                    <div class="px-3 px-md-4 pb-4 position-relative" style="margin-top: -60px;">
+                        <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-end gap-3 gap-md-4 text-center text-sm-start">
+                            <div class="position-relative" style="flex-shrink: 0;">
                                 <img src="{% if usuario.coach_profile.avatar %}{{ usuario.coach_profile.avatar.url }}{% else %}https://ui-avatars.com/api/?name={{ usuario.name }}&background=ff0055&color=fff{% endif %}" 
                                     alt="Avatar {{ usuario.name }}" 
                                     class="rounded-circle border border-3 border-danger shadow" 
-                                    style="width: 120px; height: 120px; object-fit: cover; background-color: #0f172a;">
+                                    style="width: 110px; height: 110px; object-fit: cover; background-color: #0f172a;">
                                 
                                 <button type="button" class="btn btn-danger btn-sm rounded-circle position-absolute bottom-0 end-0 p-2 shadow" onclick="document.getElementById('input-avatar-coach').click();" title="Cambiar Avatar">
                                     <i class="bi bi-camera-fill"></i>
@@ -388,9 +346,9 @@
                             </div>
 
                             <!-- Info Principal -->
-                            <div class="text-center text-md-start flex-grow-1">
-                                <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-1">
-                                    <h2 class="font-urbanist fw-bold text-white mb-0">{{ usuario.name }}</h2>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center justify-content-center justify-content-sm-start gap-2 mb-1">
+                                    <h2 class="font-urbanist fw-bold text-white mb-0" style="font-size: clamp(1.4rem, 4vw, 2rem);">{{ usuario.name }}</h2>
                                     <span class="badge bg-danger text-uppercase font-monospace" style="font-size: 0.7rem; letter-spacing: 1px;">HEAD COACH</span>
                                 </div>
                                 <p class="text-white-50 small mb-2"><i class="bi bi-shield-check text-danger me-1"></i> Dirección Táctica & Estrategia de Plantel</p>
@@ -401,7 +359,7 @@
                 </div>
 
                 <!-- Form edicion perfil -->
-                <div class="p-4 rounded-4 border border-secondary shadow-sm" style="background-color: #0f172a;">
+                <div class="p-3 p-md-4 rounded-4 border border-secondary shadow-sm" style="background-color: #0f172a;">
                     <h4 class="font-urbanist fw-bold text-white mb-3" style="font-size: 1.1rem;"><i class="bi bi-sliders me-2" style="color: #ff0055;"></i> Configuración de Cuenta</h4>
                     
                     <form action="{% url 'update_profile' %}" method="POST" enctype="multipart/form-data">
@@ -411,11 +369,11 @@
                         <input type="file" id="input-banner-coach" name="banner" class="d-none" onchange="this.form.submit();">
 
                         <div class="row g-3">
-                            <div class="col-md-6">
+                            <div class="col-12 col-md-6">
                                 <label class="form-label text-white-50 small fw-bold">Nombre Completo</label>
                                 <input type="text" name="name" value="{{ usuario.name }}" class="form-control bg-dark text-white border-secondary">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-12 col-md-6">
                                 <label class="form-label text-white-50 small fw-bold">Nombre de Usuario</label>
                                 <input type="text" value="{{ usuario.username }}" class="form-control bg-dark text-white-50 border-secondary" disabled>
                             </div>
@@ -423,8 +381,8 @@
                                 <label class="form-label text-white-50 small fw-bold">Filosofía Táctica / Biografía</label>
                                 <textarea name="biography" class="form-control bg-dark text-white border-secondary" rows="3" placeholder="Escribí tu visión de juego, notas para el equipo o metas de la temporada...">{{ usuario.coach_profile.biography|default:'' }}</textarea>
                             </div>
-                            <div class="col-12 text-end mt-4">
-                                <button type="submit" class="btn text-white fw-bold px-4" style="background: linear-gradient(45deg, #ff0055, #ff4d88); border: none;">
+                            <div class="col-12 text-center text-md-end mt-4">
+                                <button type="submit" class="btn text-white fw-bold w-100 w-md-auto px-4" style="background: linear-gradient(45deg, #ff0055, #ff4d88); border: none;">
                                     <i class="bi bi-save me-1"></i> Guardar Cambios
                                 </button>
                             </div>
@@ -435,6 +393,7 @@
 
             <!-- miro -->
             <section id="section-miro" class="dashboard-panel animate-fade-in" style="display: none;">
+                <h1 class="font-urbanist fw-bold mb-4 fs-3 fs-md-1">PIZARRA STRATBOOK <span class="accent-text">MIRO</span></h1>
                 <div style="width: 100%; height: 600px; border: 1px solid #334155; border-radius: 12px; overflow: hidden; background-color: #0f172a;">
                     <iframe width="100%" height="100%" src="{{ miro_boards.0.url }}" frameborder="0" scrolling="no" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>
                 </div>
@@ -442,12 +401,12 @@
 
             <!-- asistencias -->
             <section id="section-attendance" class="dashboard-panel animate-fade-in" style="display: none;">
-                <div class="p-4" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #334155; border-radius: 12px;">
-                    <h3 class="font-urbanist fw-bold mb-3">HISTORIAL GLOBAL DE <span class="accent-text">ASISTENCIAS</span></h3>
+                <div class="p-3 p-md-4" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #334155; border-radius: 12px;">
+                    <h3 class="font-urbanist fw-bold mb-3 fs-4 fs-md-3">HISTORIAL GLOBAL DE <span class="accent-text">ASISTENCIAS</span></h3>
                     <p class="text-muted small mb-4">Registro de fichajes e ingresos obligatorios del Roster Competitivo controlado por Laragon.</p>
                     
                     <div class="table-responsive">
-                        <table class="table table-dark table-borderless table-hover align-middle m-0" style="font-size: 0.9rem; --bs-table-bg: transparent;">
+                        <table class="table table-dark table-borderless table-hover align-middle text-nowrap m-0" style="font-size: 0.9rem; --bs-table-bg: transparent;">
                             <thead>
                                 <tr class="text-muted small border-bottom border-secondary" style="font-weight: 700;">
                                     <th>Fecha del Bloque</th>
@@ -478,6 +437,7 @@
 
     </div>
 
+    <!-- Modal Crear Evento -->
     <div class="modal fade" id="modalCrearEvento" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content text-start text-white">
@@ -501,7 +461,7 @@
                             <input type="text" name="titulo" class="form-control form-box" placeholder="Ej: Stratbook de Clubhouse setups / Scrim" required autocomplete="off">
                         </div>
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-12 col-md-6 mb-3">
                                 <label class="label-modal-custom">TIPO DE EVENTO TÉCNICO</label>
                                 <select name="tipo_evento" id="crear_tipo_evento" class="form-select form-box" onchange="toggleCamposEspecialesCrear()">
                                     <option value="training">Warmup / Entrenamiento</option>
@@ -511,7 +471,7 @@
                                     <option value="other">Otro</option>
                                 </select>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-12 col-md-6 mb-3">
                                 <label class="label-modal-custom">DURACIÓN (HORAS)</label>
                                 <input type="number" name="duration_hours" class="form-control form-box" min="1" max="12" value="1" required>
                             </div>
@@ -555,154 +515,163 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    let mapasSeleccionados = [];
-    function agregarMapaTag(mapaNombre) {
-        if (!mapaNombre || mapasSeleccionados.includes(mapaNombre)) return;
-        mapasSeleccionados.push(mapaNombre);
-        actualizarUIvMapas();
-    }
-    function removerMapaTag(mapaNombre) {
-        mapasSeleccionados = mapasSeleccionados.filter(m => m !== mapaNombre);
-        actualizarUIvMapas();
-    }
-    function actualizarUIvMapas() {
-        const container = document.getElementById('mapas_tags_container');
-        const hiddenInput = document.getElementById('input_mapas_oculto');
-        if (mapasSeleccionados.length === 0) {
-            container.innerHTML = `<span class="text-white-50 small my-auto px-1">Ningún mapa seleccionado</span>`;
-            hiddenInput.value = "";
-            return;
+        let mapasSeleccionados = [];
+        function agregarMapaTag(mapaNombre) {
+            if (!mapaNombre || mapasSeleccionados.includes(mapaNombre)) return;
+            mapasSeleccionados.push(mapaNombre);
+            actualizarUIvMapas();
         }
-        container.innerHTML = '';
-        mapasSeleccionados.forEach(mapa => {
-            const tag = document.createElement('span');
-            tag.className = 'badge d-inline-flex align-items-center gap-2 p-2 px-3 bg-dark text-white fw-bold';
-            tag.style.border = '1px solid #ff0055';
-            tag.style.cursor = 'pointer';
-            tag.style.borderRadius = '20px';
-            tag.style.fontSize = '0.8rem';
-            tag.innerHTML = `<span style="color: #ff0055;">✕</span> ${mapa}`;
-            tag.onclick = () => removerMapaTag(mapa);
-            container.appendChild(tag);
-        });
-        hiddenInput.value = mapasSeleccionados.join(', ');
-    }
-
-    function toggleCamposEspecialesCrear() {
-        var tipo = document.getElementById('crear_tipo_evento').value;
-        var divRival = document.getElementById('crear_div_rival');
-        var divVideo = document.getElementById('crear_div_video');
-        if(divRival) divRival.classList.add('d-none');
-        if(divVideo) divVideo.classList.add('d-none');
-        if (tipo === 'match' && divRival) divRival.classList.remove('d-none');
-        if (tipo === 'tactics' && divVideo) divVideo.classList.remove('d-none');
-    }
-
-    function guardarPosicionScroll() {
-        const contenedor = document.getElementById('agendaScrollContainer');
-        if (contenedor) {
-            localStorage.setItem('coachAgendaScrollX', contenedor.scrollLeft);
-            localStorage.setItem('coachAgendaScrollY', contenedor.scrollTop);
+        function removerMapaTag(mapaNombre) {
+            mapasSeleccionados = mapasSeleccionados.filter(m => m !== mapaNombre);
+            actualizarUIvMapas();
         }
-    }
-
-    function abrirCreadorEvento(diaNombre, horaTexto) {
-        mapasSeleccionados = [];
-        actualizarUIvMapas();
-        document.getElementById('label_dia_hora').innerText = diaNombre + " a las " + horaTexto + " hs";
-        document.getElementById('form_hora').value = horaTexto;
-        const partes = diaNombre.split(' ');
-        let fechaFormateada = "";
-        if (partes.length > 1 && partes[1].includes('/')) {
-            const infoFecha = partes[1].split('/');
-            const diaStr = infoFecha[0].padStart(2, '0');
-            const mesStr = infoFecha[1].padStart(2, '0');
-            const anioStr = new Date().getFullYear(); 
-            fechaFormateada = `${anioStr}-${mesStr}-${diaStr}`;
-        } else {
-            const diasMapa = { 'Lunes': 1, 'Martes': 2, 'Miércoles': 3, 'Jueves': 4, 'Viernes': 5, 'Sábado': 6, 'Domingo': 7 };
-            const objetivoNum = diasMapa[partes[0]];
-            const hoy = new Date();
-            let hoyNum = hoy.getDay();
-            if (hoyNum === 0) hoyNum = 7;
-            const diferencia = objetivoNum - hoyNum;
-            const fechaObjetivo = new Date(hoy);
-            fechaObjetivo.setDate(hoy.getDate() + diferencia);
-            const anio = fechaObjetivo.getFullYear();
-            const mes = String(fechaObjetivo.getMonth() + 1).padStart(2, '0');
-            const dia = String(fechaObjetivo.getDate()).padStart(2, '0');
-            fechaFormateada = `${anio}-${mes}-${dia}`;
+        function actualizarUIvMapas() {
+            const container = document.getElementById('mapas_tags_container');
+            const hiddenInput = document.getElementById('input_mapas_oculto');
+            if (mapasSeleccionados.length === 0) {
+                container.innerHTML = `<span class="text-white-50 small my-auto px-1">Ningún mapa seleccionado</span>`;
+                hiddenInput.value = "";
+                return;
+            }
+            container.innerHTML = '';
+            mapasSeleccionados.forEach(mapa => {
+                const tag = document.createElement('span');
+                tag.className = 'badge d-inline-flex align-items-center gap-2 p-2 px-3 bg-dark text-white fw-bold';
+                tag.style.border = '1px solid #ff0055';
+                tag.style.cursor = 'pointer';
+                tag.style.borderRadius = '20px';
+                tag.style.fontSize = '0.8rem';
+                tag.innerHTML = `<span style="color: #ff0055;">✕</span> ${mapa}`;
+                tag.onclick = () => removerMapaTag(mapa);
+                container.appendChild(tag);
+            });
+            hiddenInput.value = mapasSeleccionados.join(', ');
         }
-        document.getElementById('form_fecha').value = fechaFormateada;
-        toggleCamposEspecialesCrear();
-        var modalCrear = new bootstrap.Modal(document.getElementById('modalCrearEvento'));
-        modalCrear.show();
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-                const alertas = document.querySelectorAll('.alert'); 
-                alertas.forEach(alerta => {
-                    alerta.style.transition = "opacity 0.5s ease"; 
-                    alerta.style.opacity = "0"; 
-                    setTimeout(() => alerta.remove(), 500); 
+        function toggleCamposEspecialesCrear() {
+            var tipo = document.getElementById('crear_tipo_evento').value;
+            var divRival = document.getElementById('crear_div_rival');
+            var divVideo = document.getElementById('crear_div_video');
+            if(divRival) divRival.classList.add('d-none');
+            if(divVideo) divVideo.classList.add('d-none');
+            if (tipo === 'match' && divRival) divRival.classList.remove('d-none');
+            if (tipo === 'tactics' && divVideo) divVideo.classList.remove('d-none');
+        }
+
+        function guardarPosicionScroll() {
+            const contenedor = document.getElementById('agendaScrollContainer');
+            if (contenedor) {
+                localStorage.setItem('coachAgendaScrollX', contenedor.scrollLeft);
+                localStorage.setItem('coachAgendaScrollY', contenedor.scrollTop);
+            }
+        }
+
+        function abrirCreadorEvento(diaNombre, horaTexto) {
+            mapasSeleccionados = [];
+            actualizarUIvMapas();
+            document.getElementById('label_dia_hora').innerText = diaNombre + " a las " + horaTexto + " hs";
+            document.getElementById('form_hora').value = horaTexto;
+            const partes = diaNombre.split(' ');
+            let fechaFormateada = "";
+            if (partes.length > 1 && partes[1].includes('/')) {
+                const infoFecha = partes[1].split('/');
+                const diaStr = infoFecha[0].padStart(2, '0');
+                const mesStr = infoFecha[1].padStart(2, '0');
+                const anioStr = new Date().getFullYear(); 
+                fechaFormateada = `${anioStr}-${mesStr}-${diaStr}`;
+            } else {
+                const diasMapa = { 'Lunes': 1, 'Martes': 2, 'Miércoles': 3, 'Jueves': 4, 'Viernes': 5, 'Sábado': 6, 'Domingo': 7 };
+                const objetivoNum = diasMapa[partes[0]];
+                const hoy = new Date();
+                let hoyNum = hoy.getDay();
+                if (hoyNum === 0) hoyNum = 7;
+                const diferencia = objetivoNum - hoyNum;
+                const fechaObjetivo = new Date(hoy);
+                fechaObjetivo.setDate(hoy.getDate() + diferencia);
+                const anio = fechaObjetivo.getFullYear();
+                const mes = String(fechaObjetivo.getMonth() + 1).padStart(2, '0');
+                const dia = String(fechaObjetivo.getDate()).padStart(2, '0');
+                fechaFormateada = `${anio}-${mes}-${dia}`;
+            }
+            document.getElementById('form_fecha').value = fechaFormateada;
+            toggleCamposEspecialesCrear();
+            var modalCrear = new bootstrap.Modal(document.getElementById('modalCrearEvento'));
+            modalCrear.show();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                    const alertas = document.querySelectorAll('.alert'); 
+                    alertas.forEach(alerta => {
+                        alerta.style.transition = "opacity 0.5s ease"; 
+                        alerta.style.opacity = "0"; 
+                        setTimeout(() => alerta.remove(), 500); 
+                    });
+                }, 4000);
+            const links = {
+                'btn-show-dashboard': document.getElementById('section-dashboard'),
+                'btn-show-calendar': document.getElementById('section-calendar'),
+                'btn-show-profile': document.getElementById('section-profile'),
+                'btn-show-miro': document.getElementById('section-miro'),
+                'btn-show-attendance': document.getElementById('section-attendance'),
+                'btn-show-stats': document.getElementById('section-stats')
+            };
+
+            const formMesFiltro = document.getElementById('form-mes-filtro');
+
+            function switchSection(sectionId) {
+                Object.keys(links).forEach(id => {
+                    const btn = document.getElementById(id);
+                    if(btn) btn.classList.remove('active');
+                    if(links[id]) links[id].style.display = 'none';
                 });
-            }, 4000);
-        const links = {
-            'btn-show-dashboard': document.getElementById('section-dashboard'),
-            'btn-show-calendar': document.getElementById('section-calendar'),
-            'btn-show-profile': document.getElementById('section-profile'),
-            'btn-show-miro': document.getElementById('section-miro'),
-            'btn-show-attendance': document.getElementById('section-attendance'),
-            'btn-show-stats': document.getElementById('section-stats')
-        };
 
-        const formMesFiltro = document.getElementById('form-mes-filtro');
+                const targetBtn = document.getElementById(sectionId);
+                const targetPanel = links[sectionId];
 
-        function switchSection(sectionId) {
-            Object.keys(links).forEach(id => {
-                const btn = document.getElementById(id);
-                if(btn) btn.classList.remove('active');
-                if(links[id]) links[id].style.display = 'none';
+                if (targetBtn) targetBtn.classList.add('active');
+                if (targetPanel) targetPanel.style.display = 'block';
+
+                if (sectionId === 'btn-show-calendar') {
+                    if(formMesFiltro) formMesFiltro.style.setProperty('display', 'flex', 'important');
+                } else {
+                    if(formMesFiltro) formMesFiltro.style.setProperty('display', 'none', 'important');
+                }
+
+                localStorage.setItem('coachActiveSection', sectionId);
+            }
+
+            Object.keys(links).forEach(btnId => {
+                const btnElement = document.getElementById(btnId);
+                if (btnElement) {
+                    btnElement.addEventListener('click', () => {
+                        switchSection(btnId);
+                    });
+                }
             });
 
-            const targetBtn = document.getElementById(sectionId);
-            const targetPanel = links[sectionId];
+            const cachedSection = localStorage.getItem('coachActiveSection') || 'btn-show-dashboard';
+            switchSection(cachedSection);
 
-            if (targetBtn) targetBtn.classList.add('active');
-            if (targetPanel) targetPanel.style.display = 'block';
-
-            if (sectionId === 'btn-show-calendar') {
-                if(formMesFiltro) formMesFiltro.style.setProperty('display', 'flex', 'important');
-            } else {
-                if(formMesFiltro) formMesFiltro.style.setProperty('display', 'none', 'important');
-            }
-
-            localStorage.setItem('coachActiveSection', sectionId);
-        }
-
-        Object.keys(links).forEach(btnId => {
-            const btnElement = document.getElementById(btnId);
-            if (btnElement) {
-                btnElement.addEventListener('click', () => {
-                    switchSection(btnId);
-                });
+            const contenedor = document.getElementById('agendaScrollContainer');
+            const posX = localStorage.getItem('coachAgendaScrollX');
+            const posY = localStorage.getItem('coachAgendaScrollY');
+            if (contenedor) {
+                if (posX !== null) contenedor.scrollLeft = parseInt(posX, 10);
+                if (posY !== null) contenedor.scrollTop = parseInt(posY, 10);
+                localStorage.removeItem('coachAgendaScrollX');
+                localStorage.removeItem('coachAgendaScrollY');
             }
         });
-
-        const cachedSection = localStorage.getItem('coachActiveSection') || 'btn-show-dashboard';
-        switchSection(cachedSection);
-
-        const contenedor = document.getElementById('agendaScrollContainer');
-        const posX = localStorage.getItem('coachAgendaScrollX');
-        const posY = localStorage.getItem('coachAgendaScrollY');
-        if (contenedor) {
-            if (posX !== null) contenedor.scrollLeft = parseInt(posX, 10);
-            if (posY !== null) contenedor.scrollTop = parseInt(posY, 10);
-            localStorage.removeItem('coachAgendaScrollX');
-            localStorage.removeItem('coachAgendaScrollY');
-        }
-    });
-</script>
+    </script>
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register("{% static 'sw.js' %}")
+                .then(reg => console.log('Service Worker de Traino activo:', reg.scope))
+                .catch(err => console.error('Error al registrar Service Worker:', err));
+        });
+    }
+    </script>
 </body>
 </html>

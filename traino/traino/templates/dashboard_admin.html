@@ -5,50 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Traino - Panel de Control Administrativo</title>
+    <!-- pwa-->
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#ff0055">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="{% static 'images/icon-192.png' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/styles_dashboards.css' %}">
 </head>
-<body style="background-color: #020617; color: white; min-height: 100vh; overflow-x: hidden;">
+<body>
 
-    <div class="sidebar-container">
-        <div>
-            <a class="sidebar-brand" href="#">TRAINO<span>.ADMIN</span></a>
-            <ul class="sidebar-menu">
-                <li>
-                    <div id="btn-show-users" class="sidebar-link active">
-                        <i class="bi bi-people-fill"></i> Control de Usuarios
-                    </div>
-                </li>
-                <li>
-                    <div id="btn-show-teams" class="sidebar-link">
-                        <i class="bi bi-shield-lock-fill"></i> Liga Global 2026
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div class="sidebar-footer">
-            {% if usuario %}
-            <div class="sidebar-user-card">
-                <div class="user-avatar-mini" style="background: linear-gradient(135deg, #ff0055, #f59e0b);">AD</div>
-                <div class="overflow-hidden">
-                    <h6 class="text-white mb-0 text-truncate" style="font-size: 0.85rem;">{{ usuario.username }}</h6>
-                    <small class="text-warning text-uppercase" style="font-size: 0.65rem;">{{ usuario.role_type }}</small>
-                </div>
-            </div>
-            {% endif %}
-            <a href="{% url 'login' %}" class="btn btn-logout-sidebar"><i class="bi bi-box-arrow-left"></i> Cerrar Sesión</a>
-        </div>
-    </div>
+    {% include 'components/sidebar_admin.html' %}
 
-
-    <div style="margin-left: 260px; padding: 40px; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between;">
+    <div class="main-wrapper-content">
         
         <div>
-            <div class="row g-4 mb-5">
-                <div class="col-md-4">
-                    <div class="p-4" style="background-color: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
+            <!-- Indicadores KPI -->
+            <div class="row g-3 g-md-4 mb-4 mb-md-5">
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="p-3 p-md-4" style="background-color: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
                         <div>
                             <small class="text-muted text-uppercase fw-bold font-monospace" style="font-size: 0.7rem;">Plantel Jugadores</small>
                             <h3 class="m-0 font-urbanist fw-bold mt-1" style="color: #ff0055;">{{ players|length }} <span style="font-size: 0.9rem; color: #94a3b8; font-weight: 400;">PROS</span></h3>
@@ -56,8 +34,8 @@
                         <i class="bi bi-controller text-muted" style="font-size: 2rem; opacity: 0.2;"></i>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="p-4" style="background-color: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="p-3 p-md-4" style="background-color: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
                         <div>
                             <small class="text-muted text-uppercase fw-bold font-monospace" style="font-size: 0.7rem;">Cuerpo Técnico</small>
                             <h3 class="m-0 font-urbanist fw-bold mt-1" style="color: #f59e0b;">{{ coaches|length }} <span style="font-size: 0.9rem; color: #94a3b8; font-weight: 400;">STAFF</span></h3>
@@ -65,8 +43,8 @@
                         <i class="bi bi-person-workspace text-muted" style="font-size: 2rem; opacity: 0.2;"></i>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="p-4" style="background-color: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
+                <div class="col-12 col-sm-12 col-md-4">
+                    <div class="p-3 p-md-4" style="background-color: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
                         <div>
                             <small class="text-muted text-uppercase fw-bold font-monospace" style="font-size: 0.7rem;">Liga Conectada</small>
                             <h3 class="m-0 font-urbanist fw-bold mt-1" style="color: #3b82f6;">{{ equipos|length }} <span style="font-size: 0.9rem; color: #94a3b8; font-weight: 400;">TEAMS</span></h3>
@@ -76,20 +54,22 @@
                 </div>
             </div>
 
+            <!-- Seccion Control de Usuarios -->
             <section id="section-users" class="animate-fade-in">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1 class="font-urbanist fw-bold m-0" style="font-size: 1.75rem;">SISTEMA DE <span class="accent-text" style="color: #ff0055;">ROSTERS</span></h1>
-                    <button class="btn btn-save-gamer px-3 py-2" data-bs-toggle="modal" data-bs-target="#modalCrearUsuario" style="font-size: 0.85rem; background-color: #ff0055; border: none; font-weight: 700;">
-                        <i class="bi bi-person-plus-fill"></i> REGISTRAR USUARIO
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4">
+                    <h1 class="font-urbanist fw-bold m-0 fs-3 fs-md-2">SISTEMA DE <span class="accent-text" style="color: #ff0055;">ROSTERS</span></h1>
+                    <button class="btn btn-save-gamer px-3 py-2 w-100 w-sm-auto" data-bs-toggle="modal" data-bs-target="#modalCrearUsuario" style="font-size: 0.85rem; background-color: #ff0055; border: none; font-weight: 700;">
+                        <i class="bi bi-person-plus-fill me-1"></i> REGISTRAR USUARIO
                     </button>
                 </div>
 
+                <!-- Tabla Jugadores -->
                 <div class="mb-5">
                     <div class="p-3 mb-2" style="background-color: rgba(30, 41, 59, 0.2); border-left: 3px solid #ff0055; border-radius: 0 8px 8px 0;">
                         <h5 class="font-urbanist fw-bold m-0" style="font-size: 0.9rem; color: #cbd5e1;">PLANTEL DE JUGADORES</h5>
                     </div>
-                    <div class="p-2 shadow" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #1e293b; border-radius: 12px;">
-                        <table class="table table-dark table-borderless table-hover align-middle m-0" style="--bs-table-bg: transparent;">
+                    <div class="p-2 shadow table-responsive" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #1e293b; border-radius: 12px;">
+                        <table class="table table-dark table-borderless table-hover align-middle text-nowrap m-0" style="--bs-table-bg: transparent;">
                             <thead>
                                 <tr class="text-muted small border-bottom border-secondary" style="font-weight: 700;">
                                     <th style="padding-left: 15px;">Perfil</th>
@@ -112,96 +92,6 @@
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-outline-info py-1 px-2 font-urbanist me-2" data-bs-toggle="modal" data-bs-target="#modalVerPerfil{{ p.id }}" style="font-size: 0.75rem; border-radius: 6px;">Ver Perfil</button>
                                         <button class="btn btn-sm btn-outline-light py-1 px-2 font-urbanist" data-bs-toggle="modal" data-bs-target="#modalEditarJugador{{ p.id }}" style="font-size: 0.75rem; border-radius: 6px;">Modificar</button>
-
-                                        <div class="modal fade text-start" id="modalVerPerfil{{ p.id }}" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered modal-sm">
-                                                <div class="modal-content text-white" style="background-color: #0b1329; border: 1px solid #1e293b; border-radius: 14px;">
-                                                    <div class="modal-header border-0 pb-0">
-                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <div class="modal-body text-center pt-0">
-                                                        {% if p.player_profile.avatar %}
-                                                            <img src="/media/{{ p.player_profile.avatar }}" alt="Avatar" class="rounded-circle mb-3 shadow" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #0dcaf0;">
-                                                        {% else %}
-                                                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 80px; height: 80px; background: #1e293b; font-size: 2rem; font-weight: 700; border: 2px solid #0dcaf0; color: #cbd5e1;">
-                                                                {{ p.name|slice:":2"|upper }}
-                                                            </div>
-                                                        {% endif %}
-                                                        
-                                                        <h5 class="fw-bold mb-0 font-urbanist">{{ p.name }}</h5>
-                                                        <p class="text-info small mb-3 font-monospace">@{{ p.username }}</p>
-
-                                                        <div class="p-2 rounded text-start mb-3" style="background-color: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b;">
-                                                            <div class="d-flex justify-content-between mb-1">
-                                                                <small class="text-muted" style="font-size: 0.7rem;">Equipo:</small>
-                                                                <small class="fw-bold">{{ p.player_profile.team_name|default:"Sin Equipo" }}</small>
-                                                            </div>
-                                                            <div class="d-flex justify-content-between">
-                                                                <small class="text-muted" style="font-size: 0.7rem;">Rol:</small>
-                                                                <small class="fw-bold text-white">{{ p.player_profile.position_role|default:"A Definir" }}</small>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="text-start">
-                                                            <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Biografía</small>
-                                                            <p class="small mb-0 mt-1" style="color: #cbd5e1; font-size: 0.8rem; line-height: 1.4;">
-                                                                {{ p.player_profile.biography|default:"Este jugador no ha configurado su biografía." }}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="modal fade text-start" id="modalEditarJugador{{ p.id }}" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content text-white" style="background-color: #0b1329; border: 1px solid #1e293b; border-radius: 14px;">
-                                                    <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                                        <h5 class="modal-title fw-bold font-urbanist"><span class="accent-text" style="color:#ff0055;">MODIFICAR</span> PERFIL</h5>
-                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <form action="{% url 'editar_jugador_admin' %}" method="POST">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="usuario_id" value="{{ p.id }}">
-                                                        <div class="modal-body">
-                                                            <div class="row">
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Nombre Completo</label>
-                                                                    <input type="text" name="name" class="form-control" value="{{ p.name }}" required style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
-                                                                </div>
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Tag / Nickname</label>
-                                                                    <input type="text" name="username" class="form-control" value="{{ p.username }}" required style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Rol / Posición</label>
-                                                                    <input type="text" name="position_role" class="form-control" value="{{ p.player_profile.position_role|default:'' }}" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;" placeholder="Ej: Entry, IGL">
-                                                                </div>
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Equipo Asignado</label>
-                                                                    <select name="team_name" class="form-select" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
-                                                                        <option value="">--- Sin Equipo ---</option>
-                                                                        {% for e in equipos %}
-                                                                            <option value="{{ e.name }}" {% if p.player_profile.team_name == e.name %}selected{% endif %}>{{ e.name }}</option>
-                                                                        {% endfor %}
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="mb-2">
-                                                                <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Biografía / Notas</label>
-                                                                <textarea name="biography" class="form-control" rows="3" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px; resize: none;">{{ p.player_profile.biography|default:'' }}</textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer" style="border-top: 1px solid rgba(255,255,255,0.05);">
-                                                            <button type="submit" class="btn w-100 py-2.5 font-urbanist" style="background-color: #ff0055; font-weight: 700; color: white; border-radius: 6px; border: none;">GUARDAR CAMBIOS</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-
                                     </td>
                                 </tr>
                                 {% empty %}
@@ -212,12 +102,13 @@
                     </div>
                 </div>
 
+                <!-- Tabla Coaches -->
                 <div>
                     <div class="p-3 mb-2" style="background-color: rgba(30, 41, 59, 0.2); border-left: 3px solid #f59e0b; border-radius: 0 8px 8px 0;">
                         <h5 class="font-urbanist fw-bold m-0" style="font-size: 0.9rem; color: #cbd5e1;">CUERPO TÉCNICO / COACHES</h5>
                     </div>
-                    <div class="p-2 shadow" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #1e293b; border-radius: 12px;">
-                        <table class="table table-dark table-borderless table-hover align-middle m-0" style="--bs-table-bg: transparent;">
+                    <div class="p-2 shadow table-responsive" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #1e293b; border-radius: 12px;">
+                        <table class="table table-dark table-borderless table-hover align-middle text-nowrap m-0" style="--bs-table-bg: transparent;">
                             <thead>
                                 <tr class="text-muted small border-bottom border-secondary" style="font-weight: 700;">
                                     <th style="padding-left: 15px;">Estratega</th>
@@ -240,97 +131,6 @@
                                     <td class="text-center">
                                         <button class="btn btn-sm btn-outline-warning py-1 px-2 font-urbanist me-2" data-bs-toggle="modal" data-bs-target="#modalVerCoach{{ c.id }}" style="font-size: 0.75rem; border-radius: 6px;">Ver Perfil</button>
                                         <button class="btn btn-sm btn-outline-light py-1 px-2 font-urbanist" data-bs-toggle="modal" data-bs-target="#modalEditarCoach{{ c.id }}" style="font-size: 0.75rem; border-radius: 6px;">Modificar</button>
-
-                                        <div class="modal fade text-start" id="modalVerCoach{{ c.id }}" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered modal-sm">
-                                                <div class="modal-content text-white" style="background-color: #0b1329; border: 1px solid #1e293b; border-radius: 14px;">
-                                                    <div class="modal-header border-0 pb-0">
-                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <div class="modal-body text-center pt-0">
-                                                        {% if c.player_profile.avatar %}
-                                                            <img src="/media/{{ c.player_profile.avatar }}" alt="Avatar" class="rounded-circle mb-3 shadow" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #f59e0b;">
-                                                        {% else %}
-                                                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 80px; height: 80px; background: #1e293b; font-size: 2rem; font-weight: 700; border: 2px solid #f59e0b; color: #cbd5e1;">
-                                                                {{ c.name|slice:":2"|upper }}
-                                                            </div>
-                                                        {% endif %}
-                                                        
-                                                        <h5 class="fw-bold mb-0 font-urbanist">{{ c.name }}</h5>
-                                                        <p class="text-warning small mb-3 font-monospace">@{{ c.username }}</p>
-
-                                                        <div class="p-2 rounded text-start mb-3" style="background-color: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b;">
-                                                            <div class="d-flex justify-content-between mb-1">
-                                                                <small class="text-muted" style="font-size: 0.7rem;">Equipo:</small>
-                                                                <small class="fw-bold">{{ c.player_profile.team_name|default:"Sin Equipo" }}</small>
-                                                            </div>
-                                                            <div class="d-flex justify-content-between">
-                                                                <small class="text-muted" style="font-size: 0.7rem;">Rol:</small>
-                                                                <small class="fw-bold text-white">{{ c.player_profile.position_role|default:"Estratega" }}</small>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="text-start">
-                                                            <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Biografía</small>
-                                                            <p class="small mb-0 mt-1" style="color: #cbd5e1; font-size: 0.8rem; line-height: 1.4;">
-                                                                {{ c.player_profile.biography|default:"Este coach no ha configurado su biografía." }}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="modal fade text-start" id="modalEditarCoach{{ c.id }}" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content text-white" style="background-color: #0b1329; border: 1px solid #1e293b; border-radius: 14px;">
-                                                    <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                                        <h5 class="modal-title fw-bold font-urbanist"><span class="accent-text" style="color:#f59e0b;">MODIFICAR</span> PERFIL</h5>
-                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                                    </div>
-
-                                                    <form action="{% url 'editar_jugador_admin' %}" method="POST">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="usuario_id" value="{{ c.id }}">
-                                                        <div class="modal-body">
-                                                            <div class="row">
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Nombre Completo</label>
-                                                                    <input type="text" name="name" class="form-control" value="{{ c.name }}" required style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
-                                                                </div>
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Tag / Nickname</label>
-                                                                    <input type="text" name="username" class="form-control" value="{{ c.username }}" required style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Rol / Posición</label>
-                                                                    <input type="text" name="position_role" class="form-control" value="{{ c.player_profile.position_role|default:'' }}" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;" placeholder="Ej: Head Coach">
-                                                                </div>
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Equipo Asignado</label>
-                                                                    <select name="team_name" class="form-select" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
-                                                                        <option value="">--- Sin Equipo ---</option>
-                                                                        {% for e in equipos %}
-                                                                            <option value="{{ e.name }}" {% if c.player_profile.team_name == e.name %}selected{% endif %}>{{ e.name }}</option>
-                                                                        {% endfor %}
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="mb-2">
-                                                                <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Biografía / Notas</label>
-                                                                <textarea name="biography" class="form-control" rows="3" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px; resize: none;">{{ c.player_profile.biography|default:'' }}</textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer" style="border-top: 1px solid rgba(255,255,255,0.05);">
-                                                            <button type="submit" class="btn w-100 py-2.5 font-urbanist" style="background-color: #f59e0b; font-weight: 700; color: #000; border-radius: 6px; border: none;">GUARDAR CAMBIOS</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-
                                     </td>
                                 </tr>
                                 {% empty %}
@@ -342,16 +142,17 @@
                 </div>
             </section>
 
+            <!-- Seccion Liga Global -->
             <section id="section-teams" style="display: none;" class="animate-fade-in">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1 class="font-urbanist fw-bold m-0" style="font-size: 1.75rem;">LIGA GLOBAL <span class="accent-text" style="color: #ff0055;">2026</span></h1>
-                    <button class="btn btn-save-gamer px-3 py-2" data-bs-toggle="modal" data-bs-target="#modalCrearEquipo" style="font-size: 0.85rem; background-color: #ff0055; border: none; font-weight: 700;">
-                        <i class="bi bi-shield-plus"></i> AGREGAR EQUIPO
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 mb-4">
+                    <h1 class="font-urbanist fw-bold m-0 fs-3 fs-md-2">LIGA GLOBAL <span class="accent-text" style="color: #ff0055;">2026</span></h1>
+                    <button class="btn btn-save-gamer px-3 py-2 w-100 w-sm-auto" data-bs-toggle="modal" data-bs-target="#modalCrearEquipo" style="font-size: 0.85rem; background-color: #ff0055; border: none; font-weight: 700;">
+                        <i class="bi bi-shield-plus me-1"></i> AGREGAR EQUIPO
                     </button>
                 </div>
 
-                <div class="p-2 shadow" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #1e293b; border-radius: 12px;">
-                    <table class="table table-dark table-borderless table-hover align-middle m-0" style="--bs-table-bg: transparent;">
+                <div class="p-2 shadow table-responsive" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #1e293b; border-radius: 12px;">
+                    <table class="table table-dark table-borderless table-hover align-middle text-nowrap m-0" style="--bs-table-bg: transparent;">
                         <thead>
                             <tr class="text-muted small border-bottom border-secondary" style="font-weight: 700;">
                                 <th style="width: 100px; padding-left: 15px;">Rango</th>
@@ -372,60 +173,15 @@
                                 </td>
                                 <td><span class="text-white-50">{{ e.get_region_display|upper }}</span></td>
                                 <td class="text-center">
-                                    
                                     <button class="btn btn-sm btn-outline-info py-1 px-2 font-urbanist me-2" data-bs-toggle="modal" data-bs-target="#modalEditarEquipo{{ e.id }}" style="font-size: 0.75rem; border-radius: 6px;">
                                         Modificar
                                     </button>
-
                                     <form action="{% url 'eliminar_equipo' %}" method="POST" class="d-inline-block" onsubmit="return confirm('¿Seguro querés eliminar este equipo de Traino?')">
                                         {% csrf_token %}
                                         <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
                                         <input type="hidden" name="equipo_id" value="{{ e.id }}">
                                         <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2 font-urbanist" style="font-size: 0.75rem; border-radius: 6px;">Eliminar</button>
                                     </form>
-
-                                    <div class="modal fade text-start" id="modalEditarEquipo{{ e.id }}" tabindex="-1" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content text-white" style="background-color: #0b1329; border: 1px solid #1e293b; border-radius: 14px;">
-                                                <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                                    <h5 class="modal-title fw-bold font-urbanist"><span class="accent-text" style="color:#ff0055;">MODIFICAR</span> EQUIPO</h5>
-                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <form action="{% url 'actualizar_equipo' %}" method="POST">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
-                                                    <input type="hidden" name="equipo_id" value="{{ e.id }}">
-                                                    <div class="modal-body">
-                                                        <div class="mb-3">
-                                                            <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Nombre del Equipo</label>
-                                                            <input type="text" name="name" class="form-control" value="{{ e.name }}" required style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Región de Servidores</label>
-                                                            <select name="region" class="form-select" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
-                                                                <option value="LATAM" {% if e.region == 'LATAM' %}selected{% endif %}>Latinoamérica</option>
-                                                                <option value="BR" {% if e.region == 'BR' %}selected{% endif %}>Brasil</option>
-                                                                <option value="NA" {% if e.region == 'NA' %}selected{% endif %}>Norteamérica</option>
-                                                                <option value="EU" {% if e.region == 'EU' %}selected{% endif %}>Europa</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Ruta Local del Logo (.png)</label>
-                                                            <input type="text" name="logo_url" class="form-control" value="{{ e.logo_url|default:'' }}" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Puesto en Ranking Global</label>
-                                                            <input type="number" name="global_rank" class="form-control" value="{{ e.global_rank }}" required style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer" style="border-top: 1px solid rgba(255,255,255,0.05);">
-                                                        <button type="submit" class="btn w-100 py-2.5 font-urbanist" style="background-color: #ff0055; font-weight: 700; color: white; border-radius: 6px; border: none;">GUARDAR CAMBIOS</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-
                                 </td>
                             </tr>
                             {% empty %}
@@ -437,12 +193,241 @@
             </section>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center border-top border-secondary pt-3 mt-5" style="opacity: 0.5;">
-            <p class="text-muted small mb-0 font-urbanist">© 2026 Traino Admin — Consola de Infraestructura Estratégica</p>
+        <!-- Footer -->
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 border-top border-secondary pt-3 mt-5" style="opacity: 0.5;">
+            <p class="text-muted small mb-0 font-urbanist text-center text-sm-start">© 2026 Traino Admin — Consola de Infraestructura Estratégica</p>
             <span class="small font-monospace">Core Config: {{ config.version_core|default:"v1.2.0-ADMIN" }}</span>
         </div>
     </div>
 
+    <!-- Modales de Jugadores -->
+    {% for p in players %}
+    <div class="modal fade text-start" id="modalVerPerfil{{ p.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content text-white" style="background-color: #0b1329; border: 1px solid #1e293b; border-radius: 14px;">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center pt-0">
+                    {% if p.player_profile.avatar %}
+                        <img src="/media/{{ p.player_profile.avatar }}" alt="Avatar" class="rounded-circle mb-3 shadow" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #0dcaf0;">
+                    {% else %}
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 80px; height: 80px; background: #1e293b; font-size: 2rem; font-weight: 700; border: 2px solid #0dcaf0; color: #cbd5e1;">
+                            {{ p.name|slice:":2"|upper }}
+                        </div>
+                    {% endif %}
+                    <h5 class="fw-bold mb-0 font-urbanist">{{ p.name }}</h5>
+                    <p class="text-info small mb-3 font-monospace">@{{ p.username }}</p>
+
+                    <div class="p-2 rounded text-start mb-3" style="background-color: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b;">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small class="text-muted" style="font-size: 0.7rem;">Equipo:</small>
+                            <small class="fw-bold">{{ p.player_profile.team_name|default:"Sin Equipo" }}</small>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted" style="font-size: 0.7rem;">Rol:</small>
+                            <small class="fw-bold text-white">{{ p.player_profile.position_role|default:"A Definir" }}</small>
+                        </div>
+                    </div>
+
+                    <div class="text-start">
+                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Biografía</small>
+                        <p class="small mb-0 mt-1 text-wrap" style="color: #cbd5e1; font-size: 0.8rem; line-height: 1.4;">
+                            {{ p.player_profile.biography|default:"Este jugador no ha configurado su biografía." }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade text-start" id="modalEditarJugador{{ p.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-white" style="background-color: #0b1329; border: 1px solid #1e293b; border-radius: 14px;">
+                <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <h5 class="modal-title fw-bold font-urbanist"><span class="accent-text" style="color:#ff0055;">MODIFICAR</span> PERFIL</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="{% url 'editar_jugador_admin' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="usuario_id" value="{{ p.id }}">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 col-md-6 mb-3">
+                                <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Nombre Completo</label>
+                                <input type="text" name="name" class="form-control" value="{{ p.name }}" required style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
+                            </div>
+                            <div class="col-12 col-md-6 mb-3">
+                                <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Tag / Nickname</label>
+                                <input type="text" name="username" class="form-control" value="{{ p.username }}" required style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-6 mb-3">
+                                <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Rol / Posición</label>
+                                <input type="text" name="position_role" class="form-control" value="{{ p.player_profile.position_role|default:'' }}" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;" placeholder="Ej: Entry, IGL">
+                            </div>
+                            <div class="col-12 col-md-6 mb-3">
+                                <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Equipo Asignado</label>
+                                <select name="team_name" class="form-select" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
+                                    <option value="">--- Sin Equipo ---</option>
+                                    {% for e in equipos %}
+                                        <option value="{{ e.name }}" {% if p.player_profile.team_name == e.name %}selected{% endif %}>{{ e.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Biografía / Notas</label>
+                            <textarea name="biography" class="form-control" rows="3" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px; resize: none;">{{ p.player_profile.biography|default:'' }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top: 1px solid rgba(255,255,255,0.05);">
+                        <button type="submit" class="btn w-100 py-2.5 font-urbanist" style="background-color: #ff0055; font-weight: 700; color: white; border-radius: 6px; border: none;">GUARDAR CAMBIOS</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Modales de Coaches -->
+    {% for c in coaches %}
+    <div class="modal fade text-start" id="modalVerCoach{{ c.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content text-white" style="background-color: #0b1329; border: 1px solid #1e293b; border-radius: 14px;">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center pt-0">
+                    {% if c.player_profile.avatar %}
+                        <img src="/media/{{ c.player_profile.avatar }}" alt="Avatar" class="rounded-circle mb-3 shadow" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #f59e0b;">
+                    {% else %}
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 80px; height: 80px; background: #1e293b; font-size: 2rem; font-weight: 700; border: 2px solid #f59e0b; color: #cbd5e1;">
+                            {{ c.name|slice:":2"|upper }}
+                        </div>
+                    {% endif %}
+                    <h5 class="fw-bold mb-0 font-urbanist">{{ c.name }}</h5>
+                    <p class="text-warning small mb-3 font-monospace">@{{ c.username }}</p>
+
+                    <div class="p-2 rounded text-start mb-3" style="background-color: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b;">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small class="text-muted" style="font-size: 0.7rem;">Equipo:</small>
+                            <small class="fw-bold">{{ c.player_profile.team_name|default:"Sin Equipo" }}</small>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-muted" style="font-size: 0.7rem;">Rol:</small>
+                            <small class="fw-bold text-white">{{ c.player_profile.position_role|default:"Estratega" }}</small>
+                        </div>
+                    </div>
+
+                    <div class="text-start">
+                        <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Biografía</small>
+                        <p class="small mb-0 mt-1 text-wrap" style="color: #cbd5e1; font-size: 0.8rem; line-height: 1.4;">
+                            {{ c.player_profile.biography|default:"Este coach no ha configurado su biografía." }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade text-start" id="modalEditarCoach{{ c.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-white" style="background-color: #0b1329; border: 1px solid #1e293b; border-radius: 14px;">
+                <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <h5 class="modal-title fw-bold font-urbanist"><span class="accent-text" style="color:#f59e0b;">MODIFICAR</span> PERFIL</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="{% url 'editar_jugador_admin' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="usuario_id" value="{{ c.id }}">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 col-md-6 mb-3">
+                                <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Nombre Completo</label>
+                                <input type="text" name="name" class="form-control" value="{{ c.name }}" required style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
+                            </div>
+                            <div class="col-12 col-md-6 mb-3">
+                                <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Tag / Nickname</label>
+                                <input type="text" name="username" class="form-control" value="{{ c.username }}" required style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-6 mb-3">
+                                <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Rol / Posición</label>
+                                <input type="text" name="position_role" class="form-control" value="{{ c.player_profile.position_role|default:'' }}" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;" placeholder="Ej: Head Coach">
+                            </div>
+                            <div class="col-12 col-md-6 mb-3">
+                                <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Equipo Asignado</label>
+                                <select name="team_name" class="form-select" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
+                                    <option value="">--- Sin Equipo ---</option>
+                                    {% for e in equipos %}
+                                        <option value="{{ e.name }}" {% if c.player_profile.team_name == e.name %}selected{% endif %}>{{ e.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Biografía / Notas</label>
+                            <textarea name="biography" class="form-control" rows="3" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px; resize: none;">{{ c.player_profile.biography|default:'' }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top: 1px solid rgba(255,255,255,0.05);">
+                        <button type="submit" class="btn w-100 py-2.5 font-urbanist" style="background-color: #f59e0b; font-weight: 700; color: #000; border-radius: 6px; border: none;">GUARDAR CAMBIOS</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Modales de Equipos -->
+    {% for e in equipos %}
+    <div class="modal fade text-start" id="modalEditarEquipo{{ e.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-white" style="background-color: #0b1329; border: 1px solid #1e293b; border-radius: 14px;">
+                <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <h5 class="modal-title fw-bold font-urbanist"><span class="accent-text" style="color:#ff0055;">MODIFICAR</span> EQUIPO</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="{% url 'actualizar_equipo' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                    <input type="hidden" name="equipo_id" value="{{ e.id }}">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Nombre del Equipo</label>
+                            <input type="text" name="name" class="form-control" value="{{ e.name }}" required style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Región de Servidores</label>
+                            <select name="region" class="form-select" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
+                                <option value="LATAM" {% if e.region == 'LATAM' %}selected{% endif %}>Latinoamérica</option>
+                                <option value="BR" {% if e.region == 'BR' %}selected{% endif %}>Brasil</option>
+                                <option value="NA" {% if e.region == 'NA' %}selected{% endif %}>Norteamérica</option>
+                                <option value="EU" {% if e.region == 'EU' %}selected{% endif %}>Europa</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Ruta Local del Logo (.png)</label>
+                            <input type="text" name="logo_url" class="form-control" value="{{ e.logo_url|default:'' }}" style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small mb-1" style="color: #94a3b8; font-weight: 600;">Puesto en Ranking Global</label>
+                            <input type="number" name="global_rank" class="form-control" value="{{ e.global_rank }}" required style="background-color: #020617; border: 1px solid #334155; color: white; border-radius: 6px;">
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top: 1px solid rgba(255,255,255,0.05);">
+                        <button type="submit" class="btn w-100 py-2.5 font-urbanist" style="background-color: #ff0055; font-weight: 700; color: white; border-radius: 6px; border: none;">GUARDAR CAMBIOS</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Modal Crear Equipo -->
     <div class="modal fade" id="modalCrearEquipo" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content text-start text-white" style="background-color: #0b1329; border: 1px solid #1e293b; border-radius: 14px;">
@@ -483,6 +468,7 @@
         </div>
     </div>
 
+    <!-- Modal Crear Usuario -->
     <div class="modal fade" id="modalCrearUsuario" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content text-start text-white" style="background-color: #0b1329; border: 1px solid #1e293b; border-radius: 14px;">
@@ -521,26 +507,42 @@
         </div>
     </div>
 
+    <!-- JS de Bootstrap (Indispensable para accionar los modales) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script para alternar secciones -->
     <script>
-        const btnUsers = document.getElementById('btn-show-users');
-        const btnTeams = document.getElementById('btn-show-teams');
-        const secUsers = document.getElementById('section-users');
-        const secTeams = document.getElementById('section-teams');
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnUsers = document.getElementById('btn-show-users');
+            const btnTeams = document.getElementById('btn-show-teams');
+            const secUsers = document.getElementById('section-users');
+            const secTeams = document.getElementById('section-teams');
 
-        btnUsers.addEventListener('click', () => {
-            btnUsers.classList.add('active');
-            btnTeams.classList.remove('active');
-            secUsers.style.display = 'block';
-            secTeams.style.display = 'none';
-        });
+            if (btnUsers && btnTeams && secUsers && secTeams) {
+                btnUsers.addEventListener('click', function() {
+                    btnUsers.classList.add('active');
+                    btnTeams.classList.remove('active');
+                    secUsers.style.display = 'block';
+                    secTeams.style.display = 'none';
+                });
 
-        btnTeams.addEventListener('click', () => {
-            btnTeams.classList.add('active');
-            btnUsers.classList.remove('active');
-            secUsers.style.display = 'none';
-            secTeams.style.display = 'block';
+                btnTeams.addEventListener('click', function() {
+                    btnTeams.classList.add('active');
+                    btnUsers.classList.remove('active');
+                    secUsers.style.display = 'none';
+                    secTeams.style.display = 'block';
+                });
+            }
         });
+    </script>
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register("{% static 'sw.js' %}")
+                .then(reg => console.log('Service Worker de Traino activo:', reg.scope))
+                .catch(err => console.error('Error al registrar Service Worker:', err));
+        });
+    }
     </script>
 </body>
 </html>

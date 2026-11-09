@@ -1,53 +1,69 @@
-<div class="sidebar-container">
-    <div>
-        <a class="sidebar-brand" href="#">TRAINO<span>.GG</span></a>
-        
-        <ul class="sidebar-menu">
-            <li>
-                <div id="btn-show-dashboard" class="sidebar-link active">
-                    <i class="bi bi-grid-1x2-fill"></i> Dashboard
+<!-- btn hambur -->
+<div class="d-md-none position-fixed top-0 start-0 m-3" style="z-index: 1045;">
+    <button class="btn btn-dark border-secondary text-danger shadow p-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu">
+        <i class="bi bi-list fs-3"></i>
+    </button>
+</div>
+
+<div class="offcanvas-md offcanvas-start text-white border-end border-secondary d-flex flex-column" tabindex="-1" id="sidebarMenu" style="background-color: #020617; min-width: 260px; width: 260px;">
+    
+    <div class="offcanvas-header d-flex justify-content-between align-items-center p-3 border-bottom border-secondary border-opacity-25">
+        <a class="text-decoration-none fw-bold fs-4 font-urbanist text-white" href="#">
+            TRAINO<span style="color: #ff0055;">.GG</span>
+        </a>
+        <button type="button" class="btn-close btn-close-white d-md-none" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu" aria-label="Close"></button>
+    </div>
+
+    <div class="offcanvas-body d-flex flex-column justify-content-between p-3 flex-grow-1">
+        <ul class="nav nav-pills flex-column gap-2 mb-auto w-100">
+            <li class="nav-item">
+                <div id="btn-show-dashboard" class="sidebar-link active nav-link text-white d-flex align-items-center gap-2 p-2 rounded-3" style="cursor: pointer;" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu">
+                    <i class="bi bi-grid-1x2-fill text-danger"></i> Dashboard
                 </div>
             </li>
-            <li>
-                <div id="btn-show-calendar" class="sidebar-link">
+            <li class="nav-item">
+                <div id="btn-show-calendar" class="sidebar-link nav-link text-white-50 d-flex align-items-center gap-2 p-2 rounded-3" style="cursor: pointer;" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu">
                     <i class="bi bi-calendar3"></i> Agenda Táctica
                 </div>
             </li>
-            <li>
-                <div id="btn-show-profile" class="sidebar-link">
+            <li class="nav-item">
+                <div id="btn-show-profile" class="sidebar-link nav-link text-white-50 d-flex align-items-center gap-2 p-2 rounded-3" style="cursor: pointer;" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu">
                     <i class="bi bi-person-badge"></i> Mi Perfil Pro
                 </div>
             </li>
-            <li>
-                <div id="btn-show-miro" class="sidebar-link">
+            <li class="nav-item">
+                <div id="btn-show-miro" class="sidebar-link nav-link text-white-50 d-flex align-items-center gap-2 p-2 rounded-3" style="cursor: pointer;" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu">
                     <i class="bi bi-diagram-3"></i> Pizarra Miro
                 </div>
             </li>
-            <li>
-                <div id="btn-show-attendance" class="sidebar-link">
+            <li class="nav-item">
+                <div id="btn-show-attendance" class="sidebar-link nav-link text-white-50 d-flex align-items-center gap-2 p-2 rounded-3" style="cursor: pointer;" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu">
                     <i class="bi bi-clock-history"></i> Historial Asistencias
                 </div>
             </li>
-            <li>
-                <div id="btn-show-stats" class="sidebar-link">
+            <li class="nav-item">
+                <div id="btn-show-stats" class="sidebar-link nav-link text-white-50 d-flex align-items-center gap-2 p-2 rounded-3" style="cursor: pointer;" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu">
                     <i class="bi bi-graph-up-arrow"></i> Estadísticas
                 </div>
             </li>
         </ul>
+
+        <div class="border-top border-secondary border-opacity-25 pt-3 mt-3 w-100">
+            {% if usuario %}
+            <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded-3" style="background-color: rgba(255, 255, 255, 0.05);">
+                <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center fw-bold" style="width: 38px; height: 38px; min-width: 38px; font-size: 0.85rem;">
+                    {{ usuario.username|slice:":2"|upper }}
+                </div>
+                <div class="overflow-hidden">
+                    <h6 class="text-white mb-0 text-truncate" style="font-size: 0.85rem;">{{ usuario.username }}</h6>
+                    <small class="text-white-50 text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">{{ usuario.role_type }}</small>
+                </div>
+            </div>
+            {% endif %}
+            <a href="{% url 'login' %}" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2 text-decoration-none py-2" style="font-size: 0.85rem;">
+                <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+            </a>
+        </div>
     </div>
 
-    <div class="sidebar-footer">
-        {% if usuario %}
-        <div class="sidebar-user-card">
-            <div class="user-avatar-mini">
-                {{ usuario.username|slice:":2"|upper }}
-            </div>
-            <div class="overflow-hidden">
-                <h6 class="text-white mb-0 text-truncate" style="font-size: 0.85rem;">{{ usuario.username }}</h6>
-                <small class="text-muted text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">{{ usuario.role_type }}</small>
-            </div>
-        </div>
-        {% endif %}
-        <a href="{% url 'login' %}" class="btn btn-logout-sidebar"><i class="bi bi-box-arrow-left"></i> Cerrar Sesión</a>
-    </div>
 </div>

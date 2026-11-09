@@ -1,6 +1,7 @@
 :root {
     --bg-obsidian: #020617;
-    --accent-neon: #ff0055;    
+    --accent-neon: #ff0055;
+    --pink-9z: #ff0055; 
     --sidebar-width: 260px;
     --dark-obsidian: #0f172a;
     --surface-slate: rgba(30, 41, 59, 0.5);
@@ -54,7 +55,7 @@ body {
     color: #cbd5e1 !important;
 }
 
-/* contenedor agenda */
+/* Contenedor agenda */
 .agenda-container {
     background-color: #ffffff; 
     border: 1px solid #cbd5e1;
@@ -84,7 +85,7 @@ body {
     background: #94a3b8; 
 }
 
-/* grilla agenda */
+/* Grilla agenda */
 .table-agenda {
     border-collapse: separate;
     border-spacing: 0;
@@ -105,7 +106,7 @@ body {
     letter-spacing: 0.05em;
 }
 
-/* fijado de la columna de Dias */
+/* Fijado de la columna de Días */
 .table-agenda th.day-header {
     position: sticky !important;
     left: 0 !important;
@@ -141,7 +142,7 @@ body {
     position: relative;
 }
 
-/* tarjetas de actividades */
+/* Tarjetas de actividades */
 .event-card {
     border-radius: 6px;
     padding: 8px;
@@ -171,7 +172,7 @@ body {
     line-height: 1.2;
 }
 
-/* Identificadores tacticos por color */
+/* Identificadores tácticos por color */
 .type-training { border-color: #22c55e !important; }
 .type-match { border-color: #3b82f6 !important; }
 .type-tactics { border-color: #a855f7 !important; }
@@ -199,7 +200,7 @@ body {
     border-color: var(--accent-neon);
 }
 
-/*slot vacio de la grilla */
+/* Slot vacío de la grilla */
 .empty-slot-btn {
     width: 100%;
     height: 100%;
@@ -226,7 +227,7 @@ body {
     pointer-events: auto !important;
 }
 
-/*estructura de modales*/
+/* Estructura de modales */
 .modal-content {
     background-color: rgba(15, 23, 42, 0.98) !important;
     backdrop-filter: blur(16px);
@@ -317,49 +318,7 @@ select.form-box option, select.form-box-gamer option {
 }
 .btn-modal-cancel:hover { background-color: #374151 !important; }
 
-/* side bar */
-.sidebar-container {
-    width: var(--sidebar-width);
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-right: 1px solid rgba(255, 0, 85, 0.15);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 24px 16px;
-    z-index: 1000;
-}
-
-.sidebar-brand {
-    font-family: 'Urbanist', sans-serif;
-    font-weight: 800;
-    font-size: 1.4rem;
-    letter-spacing: 1.5px;
-    color: white;
-    text-decoration: none;
-    padding-left: 12px;
-    margin-bottom: 32px;
-    display: block;
-}
-
-.sidebar-brand span {
-    color: var(--pink-9z);
-}
-
-.sidebar-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
+/* Estilos de ítems de la Sidebar Offcanvas */
 .sidebar-link {
     display: flex;
     align-items: center;
@@ -382,60 +341,7 @@ select.form-box option, select.form-box-gamer option {
     padding-left: 12px;
 }
 
-.sidebar-link i {
-    font-size: 1.2rem;
-}
-
-.sidebar-footer {
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    padding-top: 16px;
-}
-
-.sidebar-user-card {
-    background-color: rgba(30, 41, 59, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-
-.user-avatar-mini {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, var(--pink-9z), #7c3aed);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: white;
-    font-size: 0.9rem;
-}
-
-.btn-logout-sidebar {
-    width: 100%;
-    border: 1px solid rgba(244, 63, 94, 0.2);
-    background-color: rgba(244, 63, 94, 0.05);
-    color: #f43f5e;
-    font-weight: 600;
-    font-size: 0.85rem;
-    padding: 8px;
-    border-radius: 6px;
-    text-align: center;
-    text-decoration: none;
-    display: block;
-    transition: all 0.2s ease;
-}
-
-.btn-logout-sidebar:hover {
-    background-color: #f43f5e;
-    color: white;
-}
-
-/* Animaciones de transicion */
+/* Animaciones de transición */
 .animate-fade-in {
     animation: fadeIn 0.3s ease-in-out;
 }
@@ -519,3 +425,45 @@ select.form-box option, select.form-box-gamer option {
 .indicator-card { background-color: var(--surface-slate); border: 1px solid var(--border-gamer); border-radius: 12px; padding: 24px; display: flex; align-items: center; justify-content: space-between; }
 .table-admin-container { background-color: rgba(15, 23, 42, 0.4); border: 1px solid var(--border-gamer); border-radius: 12px; padding: 12px; }
 .admin-section-title { background-color: rgba(30, 41, 59, 0.2); border-radius: 0 8px 8px 0; padding: 14px; margin-bottom: 12px; }
+
+/* mobile responsive */
+.main-wrapper-content {
+    margin-left: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem;
+}
+
+@media (min-width: 768px) {
+    /* 1. Sidebar fija en el lateral izquierdo */
+    #sidebarMenu, 
+    .offcanvas-md {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 260px !important;
+        height: 100vh !important;
+        z-index: 1030 !important;
+        transform: none !important;
+        visibility: visible !important;
+    }
+
+    /* 2. El contenido principal arranca a la derecha de la sidebar */
+    .main-wrapper-content {
+        margin-left: 260px !important;
+        width: calc(100% - 260px) !important;
+        padding: 2.5rem !important;
+    }
+}
+
+/* CELULAR / MOBILE (< 768px) */
+@media (max-width: 767.98px) {
+    .main-wrapper-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 1rem !important;
+        padding-top: 4.5rem !important; /* Espacio para el botón hamburguesa */
+    }
+}
