@@ -319,11 +319,20 @@ class LoginController(View):
 
         try:
             usuario_encontrado = User.objects.get(username=nickname_web)
-            if check_password(password_web, usuario_encontrado.password):
-                # guardamos el ID en la sesion del servidor
+            
+            # Compara contra el hash encriptado O contra texto plano (si se edito en el Admin)
+            es_valida = check_password(password_web, usuario_encontrado.password) or (usuario_encontrado.password == password_web)
+
+            if es_valida:
+                # si la contra estaba en texto plano, la encriptamos de una vez en la BD por seguridad
+                if usuario_encontrado.password == password_web:
+                    usuario_encontrado.password = make_password(password_web)
+                    usuario_encontrado.save()
+
+                # Guardamos el ID en la sesion del servidor
                 request.session['usuario_id'] = usuario_encontrado.id
                 
-                # Sincronizamos el estado de conexion inicial para el coach si corresponde
+                # Sincronizamos el estado de conexion inicial para el coach
                 if usuario_encontrado.role_type == 'coach':
                     request.session['coach_connected'] = True
                 
