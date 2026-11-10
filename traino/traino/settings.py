@@ -95,6 +95,7 @@ SERVER_EMAIL = 'ferchufm560@gmail.com'
 # CSRF
 CSRF_TRUSTED_ORIGINS = [
     'https://*.railway.app',
+    'https://trainogg-production.up.railway.app',
     'https://*.up.railway.app',
     'https://*.lhr.life',
     'https://*.ngrok-free.app',
