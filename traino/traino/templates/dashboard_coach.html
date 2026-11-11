@@ -268,87 +268,109 @@
                 </div>
             </section>
 
-            <section id="section-profile" class="dashboard-panel animate-fade-in" style="display: none;">
+            <section id="section-profile" style="display: none;" class="dashboard-panel animate-fade-in">
                 <h1 class="font-urbanist fw-bold mb-4 fs-3 fs-md-1">EXPEDIENTE DEL <span style="color: #ff0055;">COACH</span></h1>
 
-                <!-- Banner y Header del Perfil -->
-                <div class="position-relative mb-4 rounded-4 overflow-hidden border border-secondary shadow-lg" style="background-color: #020617;">
-                    
-                    <!-- Imagen de Banner con Overlay -->
-                    <div class="position-relative" style="height: 180px; background: url('{% if usuario.coach_profile.banner %}{{ usuario.coach_profile.banner.url }}{% else %}https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1470&auto=format&fit=crop{% endif %}') center/cover no-repeat;">
-                        <div class="position-absolute w-100 h-100" style="background: linear-gradient(to bottom, transparent, #0f172a);"></div>
+                <form action="{% url 'update_profile' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+
+                    <!-- Card Header: Banner + Avatar -->
+                    <div class="card mb-4 shadow-sm" style="background-color: #0f172a; border: 1px solid #1e293b; border-radius: 16px; overflow: hidden;">
                         
-                        <button type="button" class="btn btn-dark btn-sm position-absolute top-0 end-0 m-3 opacity-75 hover-opacity-100 border-secondary" onclick="document.getElementById('input-banner-coach').click();" style="backdrop-filter: blur(4px);">
-                            <i class="bi bi-pencil-fill me-1"></i> Cambiar Banner
-                        </button>
-                    </div>
+                        <!-- Fondo Banner -->
+                        <div id="containerBannerCoach" style="height: 180px; 
+                                    background: url('{% if usuario.player_profile.banner %}{{ usuario.player_profile.banner.url }}{% else %}https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1470&auto=format&fit=crop{% endif %}') center/cover; 
+                                    position: relative;">
+                            <div class="position-absolute w-100 h-100" style="background: linear-gradient(to bottom, transparent, #0f172a);"></div>
+                            
+                            <label for="inputBannerCoach" class="btn btn-sm position-absolute" style="top: 15px; right: 15px; z-index: 5; background-color: rgba(0,0,0,0.6); color: white; border: 1px solid #334155; cursor: pointer; backdrop-filter: blur(4px); transition: all 0.3s ease;">
+                                <i class="bi bi-pencil-fill me-1" style="color: #ff0055;"></i> Editar Fondo
+                            </label>
+                            <input type="file" id="inputBannerCoach" name="banner" accept="image/*" class="d-none" onchange="previewImagen(this, 'containerBannerCoach', true)">
+                        </div>
 
-                    <!-- Contenido del Header: Avatar + Datos -->
-                    <div class="px-3 px-md-4 pb-4 position-relative" style="margin-top: -60px;">
-                        <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-end gap-3 gap-md-4 text-center text-sm-start">
-                            <div class="position-relative" style="flex-shrink: 0;">
-                                <img src="{% if usuario.coach_profile.avatar %}{{ usuario.coach_profile.avatar.url }}{% else %}https://ui-avatars.com/api/?name={{ usuario.name }}&background=ff0055&color=fff{% endif %}" 
-                                    alt="Avatar {{ usuario.name }}" 
-                                    class="rounded-circle border border-3 border-danger shadow" 
-                                    style="width: 110px; height: 110px; object-fit: cover; background-color: #0f172a;">
+                        <!-- Info Superpuesta (Avatar + Badges) -->
+                        <div class="px-3 px-md-4 pb-4 position-relative" style="margin-top: -60px;">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center align-items-sm-end gap-3 text-center text-sm-start">
                                 
-                                <button type="button" class="btn btn-danger btn-sm rounded-circle position-absolute bottom-0 end-0 p-2 shadow" onclick="document.getElementById('input-avatar-coach').click();" title="Cambiar Avatar">
-                                    <i class="bi bi-camera-fill"></i>
-                                </button>
-                            </div>
-
-                            <!-- Info Principal -->
-                            <div class="flex-grow-1">
-                                <div class="d-flex align-items-center justify-content-center justify-content-sm-start gap-2 mb-1">
-                                    <h2 class="font-urbanist fw-bold text-white mb-0" style="font-size: clamp(1.4rem, 4vw, 2rem);">{{ usuario.name }}</h2>
-                                    <span class="badge bg-danger text-uppercase font-monospace" style="font-size: 0.7rem; letter-spacing: 1px;">HEAD COACH</span>
+                                <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-end gap-3 gap-md-4">
+                                    <!-- Foto de perfil Avatar -->
+                                    <div class="position-relative" style="width: 110px; height: 110px; border: 4px solid #0f172a; border-radius: 50%; background-color: #1e293b; box-shadow: 0 4px 15px rgba(255,0,85,0.3); z-index: 2; flex-shrink: 0;">
+                                        {% if usuario.player_profile.avatar %}
+                                            <img id="imgAvatarCoach" src="{{ usuario.player_profile.avatar.url }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                        {% else %}
+                                            <div id="imgAvatarCoachPlaceholder" class="w-100 h-100 d-flex align-items-center justify-content-center" style="border-radius: 50%;">
+                                                <span class="font-urbanist fw-bold text-white" style="font-size: 2rem;">{{ usuario.username|slice:":2"|upper }}</span>
+                                            </div>
+                                            <img id="imgAvatarCoach" src="" alt="Avatar" class="d-none" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                        {% endif %}
+                                        
+                                        <label for="inputAvatarCoach" class="position-absolute d-flex align-items-center justify-content-center shadow" style="bottom: 0px; right: -5px; width: 32px; height: 32px; background-color: #ff0055; border: 2px solid #0f172a; border-radius: 50%; cursor: pointer; transition: transform 0.2s ease;">
+                                            <i class="bi bi-camera-fill text-white" style="font-size: 0.8rem;"></i>
+                                        </label>
+                                        <input type="file" id="inputAvatarCoach" name="avatar" accept="image/*" class="d-none" onchange="previewImagen(this, 'imgAvatarCoach', false)">
+                                    </div>
+                                    
+                                    <!-- Nombre y Badges -->
+                                    <div class="pb-2">
+                                        <h2 class="mb-0 fw-bold font-urbanist text-white" style="font-size: clamp(1.4rem, 4vw, 2rem);">{{ usuario.name }}</h2>
+                                        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start gap-2 mt-1">
+                                            <span class="badge" style="background-color: rgba(255,0,85,0.1); color: #ff0055; border: 1px solid rgba(255,0,85,0.3);">Tag: {{ usuario.username }}</span>
+                                            <span class="badge bg-danger text-uppercase font-monospace" style="font-size: 0.7rem; letter-spacing: 1px;">HEAD COACH</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <p class="text-white-50 small mb-2"><i class="bi bi-shield-check text-danger me-1"></i> Dirección Táctica & Estrategia de Plantel</p>
-                            </div>
 
+                                <!-- Botones Redes Sociales -->
+                                <div class="pb-2 d-flex gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-light" style="border-color: #334155; font-size: 0.85rem;" title="Discord">
+                                        <i class="bi bi-discord" style="color: #5865F2;"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-light" style="border-color: #334155;" title="Twitch">
+                                        <i class="bi bi-twitch" style="color: #9146FF;"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-light" style="border-color: #334155;" title="X / Twitter">
+                                        <i class="bi bi-twitter-x"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Form edicion perfil -->
-                <div class="p-3 p-md-4 rounded-4 border border-secondary shadow-sm" style="background-color: #0f172a;">
-                    <h4 class="font-urbanist fw-bold text-white mb-3" style="font-size: 1.1rem;"><i class="bi bi-sliders me-2" style="color: #ff0055;"></i> Configuración de Cuenta</h4>
-                    
-                    <form action="{% url 'update_profile' %}" method="POST" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
-                        <input type="file" id="input-avatar-coach" name="avatar" class="d-none" onchange="this.form.submit();">
-                        <input type="file" id="input-banner-coach" name="banner" class="d-none" onchange="this.form.submit();">
+                    <!-- Campos de Texto y Botón Guardar -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="p-3 p-md-5 shadow-sm" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #334155; border-radius: 16px;">
+                                <h5 class="fw-bold mb-4" style="color: #ff0055;"><i class="bi bi-gear-fill me-2"></i> Configuración de Cuenta</h5>
 
-                        <div class="row g-3">
-                            <div class="col-12 col-md-6">
-                                <label class="form-label text-white-50 small fw-bold">Nombre Completo</label>
-                                <input type="text" name="name" value="{{ usuario.name }}" class="form-control bg-dark text-white border-secondary">
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <label class="form-label text-white-50 small fw-bold">Nombre de Usuario</label>
-                                <input type="text" value="{{ usuario.username }}" class="form-control bg-dark text-white-50 border-secondary" disabled>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label text-white-50 small fw-bold">Filosofía Táctica / Biografía</label>
-                                <textarea name="biography" class="form-control bg-dark text-white border-secondary" rows="3" placeholder="Escribí tu visión de juego, notas para el equipo o metas de la temporada...">{{ usuario.coach_profile.biography|default:'' }}</textarea>
-                            </div>
-                            <div class="col-12 text-center text-md-end mt-4">
-                                <button type="submit" class="btn text-white fw-bold w-100 w-md-auto px-4" style="background: linear-gradient(45deg, #ff0055, #ff4d88); border: none;">
-                                    <i class="bi bi-save me-1"></i> Guardar Cambios
-                                </button>
+                                <div class="row">
+                                    <div class="col-12 col-md-6 mb-4">
+                                        <label class="form-label label-modal-custom fw-bold">Nombre Completo</label>
+                                        <input type="text" name="name" value="{{ usuario.name }}" class="form-control form-box-gamer bg-dark text-white border-secondary">
+                                    </div>
+                                    <div class="col-12 col-md-6 mb-4">
+                                        <label class="form-label label-modal-custom fw-bold">Nombre de Usuario</label>
+                                        <input type="text" value="{{ usuario.username }}" class="form-control form-box-gamer text-white" style="background-color: #0b1121; border: 1px dashed #334155; opacity: 0.7;" readonly disabled>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label label-modal-custom fw-bold">Filosofía Táctica / Biografía</label>
+                                    <textarea name="biography" rows="4" class="form-control form-box-gamer bg-dark text-white border-secondary" placeholder="Escribí tu visión de juego, notas para el equipo..." style="resize: none;">{{ usuario.player_profile.biography|default:'' }}</textarea>
+                                </div>
+                                
+                                <hr class="border-secondary mb-4" style="opacity: 0.2;">
+                                
+                                <div class="text-center text-md-end">
+                                    <button type="submit" class="btn btn-save-gamer w-100 w-md-auto px-5 py-2 fw-bold text-uppercase shadow" style="background: linear-gradient(45deg, #ff0055, #cc0044); color: white; border: none; border-radius: 8px;">
+                                        GUARDAR CONFIGURACIÓN
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </form>
-                </div>
-            </section>
-
-            <!-- miro -->
-            <section id="section-miro" class="dashboard-panel animate-fade-in" style="display: none;">
-                <h1 class="font-urbanist fw-bold mb-4 fs-3 fs-md-1">PIZARRA STRATBOOK <span class="accent-text">MIRO</span></h1>
-                <div style="width: 100%; height: 600px; border: 1px solid #334155; border-radius: 12px; overflow: hidden; background-color: #0f172a;">
-                    <iframe width="100%" height="100%" src="{{ miro_boards.0.url }}" frameborder="0" scrolling="no" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>
-                </div>
+                    </div>
+                </form>
             </section>
 
             <!-- asistencias -->
@@ -680,5 +702,24 @@
         });
     }
     </script>
+    <script>
+        function previewImagen(input, elementId, isBanner) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (isBanner) {
+                        document.getElementById(elementId).style.backgroundImage = "url('" + e.target.result + "')";
+                    } else {
+                        const img = document.getElementById(elementId);
+                        const placeholder = document.getElementById(elementId + 'Placeholder');
+                        if (placeholder) placeholder.classList.add('d-none');
+                        img.src = e.target.result;
+                        img.classList.remove('d-none');
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        </script>
 </body>
 </html>

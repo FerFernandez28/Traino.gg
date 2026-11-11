@@ -434,47 +434,39 @@ class EditarEventoController(View):
     
 class EditarPerfilController(View):
     def post(self, request):
+        usuario_id = request.POST.get('usuario_id')
+        nuevo_nombre = request.POST.get('name')
+        biografia_web = request.POST.get('biography', '').strip()
+        avatar_web = request.FILES.get('avatar')
+        banner_web = request.FILES.get('banner')
+
+        if not usuario_id:
+            return redirect('login')
+
         try:
-            usuario_id = request.POST.get('usuario_id')
             usuario_actual = User.objects.get(id=usuario_id)
 
-            name = request.POST.get('name')
-            biography = request.POST.get('biography')
-            
-            avatar = request.FILES.get('avatar')
-            banner = request.FILES.get('banner')
-
-            if name:
-                usuario_actual.name = name
+            if nuevo_nombre:
+                usuario_actual.name = nuevo_nombre
                 usuario_actual.save()
 
-            # Guardar en perfil de Coach
-            if hasattr(usuario_actual, 'coach_profile'):
-                profile = usuario_actual.coach_profile
-                if biography is not None:
-                    profile.biography = biography
-                if avatar:
-                    profile.avatar = avatar
-                if banner:
-                    profile.banner = banner
-                profile.save()
+            # Usamos Player como perfil unico/general para el usuario
+            profile, _ = Player.objects.get_or_create(user=usuario_actual)
 
-            # Guardar en perfil de Jugador (por si edita un jugador)
-            elif hasattr(usuario_actual, 'player_profile'):
-                profile = usuario_actual.player_profile
-                if biography is not None:
-                    profile.biography = biography
-                if avatar:
-                    profile.avatar = avatar
-                if banner:
-                    profile.banner = banner
-                profile.save()
+            if 'biography' in request.POST:
+                profile.biography = biografia_web
+            if avatar_web:
+                profile.avatar = avatar_web
+            if banner_web:
+                profile.banner = banner_web
+            profile.save()
 
-            request.session['mensaje_exito'] = "Perfil actualizado correctamente."
+            request.session['mensaje_exito'] = "Perfil actualizado con éxito."
+            
         except Exception as e:
-            request.session['mensaje_error'] = f"Error al actualizar perfil: {str(e)}"
+            request.session['mensaje_error'] = f"Error al guardar expediente: {str(e)}"
 
-        return redirect('home')
+        return redirect(f'/home?usuario_id={usuario_id}')
 
 def guardar_equipo(request):
     if request.method == 'POST':
