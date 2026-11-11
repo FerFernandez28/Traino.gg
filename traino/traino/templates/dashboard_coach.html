@@ -373,29 +373,125 @@
                 </form>
             </section>
 
+            <section id="section-miro" style="display: none;" class="dashboard-panel animate-fade-in">
+                <h1 class="font-urbanist fw-bold mb-4 fs-3 fs-md-1">PIZARRA STRATBOOK <span class="accent-text">MIRO</span></h1>
+                <div style="height: 70vh; border: 1px solid #334155; border-radius: 12px; overflow: hidden; background: #020617;">
+                    <iframe width="100%" height="100%" src="https://miro.com/app/live-embed/uXjVIfN6qy0=/?embedMode=view_only_without_ui&moveToViewport=-136889,-39560,76800,37800" frameborder="0" scrolling="no" allowfullscreen></iframe>
+                </div>
+            </section>
+
             <!-- asistencias -->
             <section id="section-attendance" class="dashboard-panel animate-fade-in" style="display: none;">
-                <div class="p-3 p-md-4" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #334155; border-radius: 12px;">
-                    <h3 class="font-urbanist fw-bold mb-3 fs-4 fs-md-3">HISTORIAL GLOBAL DE <span class="accent-text">ASISTENCIAS</span></h3>
-                    <p class="text-muted small mb-4">Registro de fichajes e ingresos obligatorios del Roster Competitivo controlado por Laragon.</p>
-                    
+                
+                <!-- Header + Métricas Rápidas -->
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+                    <div>
+                        <h3 class="font-urbanist fw-bold mb-1 fs-3">HISTORIAL GLOBAL DE <span style="color: #ff0055;">ASISTENCIAS</span></h3>
+                        <p class="text-secondary small mb-0">Control de fichajes e ingresos en tiempo real del Roster Competitivo.</p>
+                    </div>
+                </div>
+
+                <!-- Cards de Métricas -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 shadow-sm text-center" style="background-color: rgba(15, 23, 42, 0.6); border: 1px solid #1e293b; border-radius: 12px;">
+                            <span class="text-secondary small text-uppercase font-monospace d-block mb-1">Registros Totales</span>
+                            <span class="fs-4 fw-bold text-white font-urbanist">{{ asistencias.count|default:"0" }}</span>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 shadow-sm text-center" style="background-color: rgba(15, 23, 42, 0.6); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 12px;">
+                            <span class="text-success small text-uppercase font-monospace d-block mb-1">Presentes / Activos</span>
+                            <span class="fs-4 fw-bold text-success font-urbanist">
+                                {% with presentes=asistencias|length %}{{ presentes }}{% endwith %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla Gamer de Asistencias -->
+                <div class="p-3 p-md-4 shadow-sm" style="background-color: rgba(15, 23, 42, 0.4); border: 1px solid #334155; border-radius: 16px;">
                     <div class="table-responsive">
-                        <table class="table table-dark table-borderless table-hover align-middle text-nowrap m-0" style="font-size: 0.9rem; --bs-table-bg: transparent;">
+                        <table class="table table-dark table-hover align-middle text-nowrap mb-0" style="background-color: transparent;">
                             <thead>
-                                <tr class="text-muted small border-bottom border-secondary" style="font-weight: 700;">
-                                    <th>Fecha del Bloque</th>
-                                    <th>Integrante del Roster</th>
-                                    <th>Rol</th>
-                                    <th class="text-center">Estado de Fichaje</th>
+                                <tr class="text-uppercase text-secondary font-monospace border-bottom border-secondary" style="font-size: 0.8rem;">
+                                    <th class="py-3">Fecha</th>
+                                    <th class="py-3">Integrante</th>
+                                    <th class="py-3">Evento / Bloque</th>
+                                    <th class="py-3 text-center">Fichaje In / Out</th>
+                                    <th class="py-3 text-center">Estado de Conexión</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="font-monospace text-muted">2026-06-19</td>
-                                    <td class="fw-bold">Juan Pérez</td>
-                                    <td><span class="badge bg-dark border border-secondary text-white">PLAYER</span></td>
-                                    <td class="text-center"><span class="badge bg-success-subtle text-success border border-success px-3">PRESENTE</span></td>
+                                {% for ficha in asistencias %}
+                                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                                    <!-- Fecha -->
+                                    <td class="font-monospace text-secondary">
+                                        {{ ficha.event.date|date:"Y-m-d" }}
+                                    </td>
+                                    
+                                    <!-- Integrante -->
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white" style="width: 32px; height: 32px; background-color: #1e293b; border: 1px solid #334155; font-size: 0.85rem;">
+                                                {{ ficha.player.user.name|slice:":2"|upper }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-white small mb-0">{{ ficha.player.user.name }}</div>
+                                                <small class="text-muted d-block" style="font-size: 0.75rem;">@{{ ficha.player.user.username }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Evento -->
+                                    <td>
+                                        <span class="badge bg-dark border border-secondary text-info fw-normal">
+                                            <i class="bi bi-controller me-1"></i> {{ ficha.event.title }}
+                                        </span>
+                                    </td>
+
+                                    <!-- Check-In / Check-Out -->
+                                    <td class="text-center font-monospace small">
+                                        {% if ficha.check_in %}
+                                            <span class="text-success"><i class="bi bi-box-arrow-in-right me-1"></i>{{ ficha.check_in|time:"H:i" }}</span>
+                                        {% else %}
+                                            <span class="text-muted">--:--</span>
+                                        {% endif %}
+                                        
+                                        <span class="text-secondary mx-1">/</span>
+
+                                        {% if ficha.check_out %}
+                                            <span class="text-warning"><i class="bi bi-box-arrow-right me-1"></i>{{ ficha.check_out|time:"H:i" }}</span>
+                                        {% else %}
+                                            <span class="text-muted">--:--</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <!-- Estado -->
+                                    <td class="text-center">
+                                        {% if ficha.is_present and not ficha.check_out %}
+                                            <span class="badge bg-success-subtle text-success border border-success px-3 py-1 font-monospace">
+                                                <i class="bi bi-wifi me-1"></i> CONECTADO
+                                            </span>
+                                        {% elif ficha.is_present and ficha.check_out %}
+                                            <span class="badge bg-secondary-subtle text-light border border-secondary px-3 py-1 font-monospace">
+                                                <i class="bi bi-power me-1"></i> DESCONECTADO
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-danger-subtle text-danger border border-danger px-3 py-1 font-monospace">
+                                                <i class="bi bi-x-circle me-1"></i> AUSENTE
+                                            </span>
+                                        {% endif %}
+                                    </td>
                                 </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="bi bi-calendar2-x fs-1 d-block mb-2 text-secondary opacity-50"></i>
+                                        <span>No hay registros de fichaje guardados en la base de datos.</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>

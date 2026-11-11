@@ -197,6 +197,9 @@ def home(request):
     anio_actual = datetime.date.today().year
     proximos_eventos = Event.objects.filter(date__month=mes_seleccionado, date__year=anio_actual).order_by('date', 'scheduled_time')[:3]
 
+    # Asistencias globales para el panel del Coach
+    asistencias = Attendance.objects.select_related('player__user', 'event').order_by('-event__date', '-check_in')
+
     # todo en el context
     context = {
         'usuario': usuario,
@@ -207,6 +210,7 @@ def home(request):
         'config': config_sistema,
         'miro_boards': globals().get('MIRO_BOARDS', []),
         'historial_asistencias': historial_asistencias,
+        'asistencias': asistencias,
         'proximos_eventos': proximos_eventos,
         
         # Stats reales desde la BD:
@@ -801,3 +805,30 @@ def generar_stats_simuladas(request):
                     )
                     
     return redirect(f"/home?usuario_id={request.session.get('usuario_id')}&player_id={player_id}")
+
+def dashboard_coach_data(usuario):
+    # Obtener todos los eventos creados
+    eventos = Event.objects.all().order_by('-date', '-time')
+    
+    # Obtener todo el historial de asistencias cargado
+    asistencias = Attendance.objects.select_related('player__user', 'event').order_by('-event__date')
+
+    # metricas rapidas del plantel
+    total_registros = asistencias.count()
+    presentes = asistencias.filter(status='present').count()
+    tardanzas = asistencias.filter(status='late').count()
+    ausentes = asistencias.filter(status='absent').count()
+
+    # Porcentaje global de puntualidad/asistencia
+    porcentaje_asistencia = round((presentes / total_registros * 100), 1) if total_registros > 0 else 100
+
+    return {
+        'eventos': eventos,
+        'asistencias': asistencias,
+        'stats_asistencia': {
+            'presentes': presentes,
+            'tardanzas': tardanzas,
+            'ausentes': ausentes,
+            'porcentaje': porcentaje_asistencia
+        }
+    }
