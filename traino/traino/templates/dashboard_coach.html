@@ -240,54 +240,6 @@
                                                     <i class="bi bi-pencil-square me-1"></i> Gestionar
                                                 </button>
                                             </div>
-
-                                            <div class="modal fade" id="modalEvento{{ evento.id }}" tabindex="-1" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered">
-                                                    <div class="modal-content text-start text-white">
-                                                        <form action="{% url 'edit_event' %}" method="POST" onsubmit="guardarPosicionScroll()">
-                                                            {% csrf_token %}
-                                                            <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
-                                                            <input type="hidden" name="evento_id" value="{{ evento.id }}">
-                                                            <input type="hidden" name="mes_filtro" value="{{ mes_seleccionado }}">
-
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title fw-bold text-white"><span class="accent-text">EDITAR</span> DETALLES TÁCTICOS</h5>
-                                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="modal-alert-block text-center mb-3">
-                                                                    Bloque: {{ dia }} a las {{ hora }} hs ({{ evento.duration_hours }} hs)
-                                                                </div>
-                                                                
-                                                                <div class="mb-3">
-                                                                    <label class="label-modal-custom">TÍTULO DE LA ACTIVIDAD:</label>
-                                                                    <input type="text" name="titulo" class="form-control form-box" value="{{ evento.title }}" required>
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <label class="label-modal-custom">OPONENTE / RIVAL / CLAN:</label>
-                                                                    <input type="text" name="rival" class="form-control form-box" value="{{ evento.rival|default:'' }}" placeholder="Ej: Team Liquid">
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <label class="label-modal-custom">MAPAS / POOL A PRACTICAR:</label>
-                                                                    <input type="text" name="maps" class="form-control form-box" value="{{ evento.maps|default:'' }}" placeholder="Ej: Clubhouse / Chalet">
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <label class="label-modal-custom">URL DE VOD / CLIP ESTRATÉGICO:</label>
-                                                                    <input type="url" name="video_link" class="form-control form-box text-info" value="{{ evento.video_link|default:'' }}" placeholder="https://youtube.com/...">
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <label class="label-modal-custom">NOTAS E INSTRUCCIONES DEL COACH:</label>
-                                                                    <textarea name="notes" class="form-control form-box" rows="3" placeholder="Pautas tácticas para el plantel...">{{ evento.notes|default:'' }}</textarea>
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-modal-cancel" data-bs-dismiss="modal">Cancelar</button>
-                                                                <button type="submit" class="btn btn-save-gamer px-4 py-2">GUARDAR CAMBIOS</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </td>
                                     {% else %}
                                         <td style="padding: 0 !important;">
@@ -436,6 +388,61 @@
         </div>
 
     </div>
+
+    <!-- Modales de Edición de Eventos (Fuera de la tabla y de las secciones) -->
+    {% for dia, horas in agenda.items %}
+        {% for hora, evento in horas.items %}
+            {% if evento and evento != 'spanned' %}
+                <div class="modal fade" id="modalEvento{{ evento.id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content text-start text-white">
+                            <form action="{% url 'edit_event' %}" method="POST" onsubmit="guardarPosicionScroll()">
+                                {% csrf_token %}
+                                <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                                <input type="hidden" name="evento_id" value="{{ evento.id }}">
+                                <input type="hidden" name="mes_filtro" value="{{ mes_seleccionado }}">
+
+                                <div class="modal-header">
+                                    <h5 class="modal-title fw-bold text-white"><span class="accent-text">EDITAR</span> DETALLES TÁCTICOS</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="modal-alert-block text-center mb-3">
+                                        Bloque: {{ dia }} a las {{ hora }} hs ({{ evento.duration_hours }} hs)
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="label-modal-custom">TÍTULO DE LA ACTIVIDAD:</label>
+                                        <input type="text" name="titulo" class="form-control form-box" value="{{ evento.title }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="label-modal-custom">OPONENTE / RIVAL / CLAN:</label>
+                                        <input type="text" name="rival" class="form-control form-box" value="{{ evento.rival|default:'' }}" placeholder="Ej: Team Liquid">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="label-modal-custom">MAPAS / POOL A PRACTICAR:</label>
+                                        <input type="text" name="maps" class="form-control form-box" value="{{ evento.maps|default:'' }}" placeholder="Ej: Clubhouse / Chalet">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="label-modal-custom">URL DE VOD / CLIP ESTRATÉGICO:</label>
+                                        <input type="url" name="video_link" class="form-control form-box text-info" value="{{ evento.video_link|default:'' }}" placeholder="https://youtube.com/...">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="label-modal-custom">NOTAS E INSTRUCCIONES DEL COACH:</label>
+                                        <textarea name="notes" class="form-control form-box" rows="3" placeholder="Pautas tácticas para el plantel...">{{ evento.notes|default:'' }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-modal-cancel" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-save-gamer px-4 py-2">GUARDAR CAMBIOS</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
 
     <!-- Modal Crear Evento -->
     <div class="modal fade" id="modalCrearEvento" tabindex="-1" aria-hidden="true">

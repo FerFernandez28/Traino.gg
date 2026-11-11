@@ -436,8 +436,21 @@ select.form-box option, select.form-box-gamer option {
     padding: 1rem;
 }
 
+/* Fix para capas de modales en mobile */
+.modal-backdrop {
+    z-index: 1045 !important;
+}
+
+.modal {
+    z-index: 1055 !important;
+}
+
+body.modal-open {
+    touch-action: auto !important;
+}
+
 @media (min-width: 768px) {
-    /* 1. Sidebar fija en el lateral izquierdo */
+    /* Sidebar fija en el lateral izquierdo */
     #sidebarMenu, 
     .offcanvas-md {
         position: fixed !important;
@@ -450,7 +463,7 @@ select.form-box option, select.form-box-gamer option {
         visibility: visible !important;
     }
 
-    /* 2. El contenido principal arranca a la derecha de la sidebar */
+    /* El contenido principal arranca a la derecha de la sidebar */
     .main-wrapper-content {
         margin-left: 260px !important;
         width: calc(100% - 260px) !important;
@@ -464,6 +477,6 @@ select.form-box option, select.form-box-gamer option {
         margin-left: 0 !important;
         width: 100% !important;
         padding: 1rem !important;
-        padding-top: 4.5rem !important; /* Espacio para el botón hamburguesa */
+        padding-top: 4.5rem !important;
     }
 }

@@ -449,18 +449,26 @@ class EditarPerfilController(View):
                 usuario_actual.name = nuevo_nombre
                 usuario_actual.save()
 
+            # Perfil de COACH
+            if hasattr(usuario_actual, 'coach_profile'):
+                coach_profile = usuario_actual.coach_profile
+                if 'biography' in request.POST:
+                    coach_profile.biography = biografia_web
+                if avatar_web:
+                    coach_profile.avatar = avatar_web
+                if banner_web:
+                    coach_profile.banner = banner_web
+                coach_profile.save()
+
+            # Perfil de JUGADOR
             if hasattr(usuario_actual, 'player_profile'):
                 player_profile = usuario_actual.player_profile
-                
                 if 'biography' in request.POST:
                     player_profile.biography = biografia_web
-                
                 if avatar_web:
                     player_profile.avatar = avatar_web
-                
                 if banner_web:
                     player_profile.banner = banner_web
-                
                 player_profile.save()
 
             request.session['mensaje_exito'] = "Ficha actualizada con éxito."
