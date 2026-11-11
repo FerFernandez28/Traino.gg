@@ -565,7 +565,7 @@ def google_login(request):
     if request.method == 'POST':
         token = request.POST.get('credential')
         try:
-            # Valida el token oficial con tu ID de Google y 30 segundos de tolerancia
+            # Valida el token con servidores de Google
             idinfo = id_token.verify_oauth2_token(
                 token, 
                 google_requests.Request(), 
@@ -575,15 +575,16 @@ def google_login(request):
             
             email = idinfo['email']
             nombre = idinfo.get('name', 'Usuario Google')
+            base_username = email.split('@')[0]
             
-            # Usamos la primera parte del mail como username
-            base_username = email.split('@')[0] 
-            
-            # Busca si ya existe en tu base de datos
-            usuario = User.objects.filter(username=base_username).first()
+            # Buscar primero por email para evitar q se mezlcen cuentas
+            usuario = User.objects.filter(email=email).first()
             
             if not usuario:
-                # Si es nuevo, lo registramos automaticamente
+                # evitar username duplicado en la BD
+                if User.objects.filter(username=base_username).exists():
+                    base_username = f"{base_username}_{User.objects.count() + 1}"
+
                 usuario = User.objects.create(
                     name=nombre,
                     username=base_username,
@@ -591,21 +592,21 @@ def google_login(request):
                     password=make_password('login_seguro_google_2026'), 
                     role_type='player'
                 )
-                # Creamos su ficha de jugador
+                
+                # Ficha de jugador por defecto
                 Player.objects.create(position_role='A Definir', team_name='9z Team', user=usuario)
 
-            # Le iniciamos la sesion
+            # Iniciar sesion guardando en session
             request.session['usuario_id'] = usuario.id
+            request.session.modified = True
             
             return redirect(f'/home?usuario_id={usuario.id}')
             
         except ValueError as e:
-            # error si hay de google
             print(f"ERROR DE GOOGLE: {str(e)}")
             return redirect('/login?error=Error al iniciar sesion con Google')
             
         except Exception as e:
-            # Para cualquier otro error
             print(f"ERROR GENERAL: {str(e)}")
             return redirect('/login?error=Error general')
             
