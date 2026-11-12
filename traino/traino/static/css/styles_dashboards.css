@@ -477,6 +477,123 @@ body.modal-open {
         margin-left: 0 !important;
         width: 100% !important;
         padding: 1rem !important;
-        padding-top: 4.5rem !important;
+        padding-bottom: 5.5rem !important;
+    }
+
+    /* banner proximo evento */
+    .mob-hero-banner {
+        background: linear-gradient(135deg, rgba(255, 0, 85, 0.16) 0%, rgba(15, 23, 42, 0.95) 100%);
+        border: 1px solid rgba(255, 0, 85, 0.45);
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: 0 8px 24px rgba(255, 0, 85, 0.12);
+    }
+
+    /* tabs deslizables */
+    .mob-tabs-scroll {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+    }
+    .mob-tabs-scroll::-webkit-scrollbar {
+        display: none;
+    }
+    .mob-pill-btn {
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid var(--border-gamer);
+        color: #94a3b8;
+        border-radius: 50px;
+        padding: 7px 16px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        transition: all 0.2s ease;
+    }
+    .mob-pill-btn.active {
+        background: var(--accent-neon);
+        border-color: var(--accent-neon);
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(255, 0, 85, 0.35);
+    }
+
+    /* tarjetas mobile */
+    .mob-card {
+        background-color: var(--dark-obsidian);
+        border: 1px solid #1e293b;
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 14px;
+    }
+    .mob-card-header {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #94a3b8;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* roster horizontal */
+    .mob-roster-strip {
+        display: flex;
+        gap: 14px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+    }
+    .mob-roster-strip::-webkit-scrollbar {
+        display: none;
+    }
+    .mob-avatar-ring {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        border: 2px solid var(--accent-neon);
+        background: #1e293b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #fff;
+        font-size: 0.85rem;
+        margin: 0 auto 6px auto;
+        overflow: hidden;
+    }
+
+    /* bottom nav */
+    .mob-bottom-nav {
+        background: rgba(2, 6, 23, 0.96);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-top: 1px solid #1e293b;
+        z-index: 1040;
+        padding: 8px 4px;
+    }
+    .mob-nav-item {
+        background: transparent;
+        border: none;
+        color: #64748b;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 0.65rem;
+        font-weight: 600;
+        gap: 3px;
+        transition: color 0.2s ease;
+    }
+    .mob-nav-item i {
+        font-size: 1.2rem;
+    }
+    .mob-nav-item.active {
+        color: #ffffff;
+    }
+    .mob-nav-item.active i {
+        color: var(--accent-neon);
     }
 }
